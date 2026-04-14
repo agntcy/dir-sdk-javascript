@@ -1,121 +1,194 @@
-# Agntcy Repo Project Template
+# Directory JavaScript SDK
 
-[![Release](https://img.shields.io/github/v/release/agntcy/repo-template?display_name=tag)](CHANGELOG.md)
-[![Lint](https://github.com/agntcy/repo-template/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/marketplace/actions/super-linter)
-[![Contributor-Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-fbab2c.svg)](CODE_OF_CONDUCT.md)
-
-## Before You Start
-
-As much as possible, we have tried to provide enough tooling to get you up and
-running quickly and with a minimum of effort. This includes sane defaults for
-documentation; templates for bug reports, feature requests, and pull requests;
-and [GitHub Actions](https://github.com/features/actions) that will
-automatically manage stale issues and pull requests. This latter defaults to
-labeling issues and pull requests as stale after 60 days of inactivity, and
-closing them after 7 additional days of inactivity. These
-[defaults](.github/workflows/stale.yml) and more can be configured. For
-configuration options, please consult the documentation for the [stale
-action](https://github.com/actions/stale).
-
-In trying to keep this template as generic and reusable as possible, there are
-some things that were omitted out of necessity and others that need a little
-tweaking. Before you begin developing in earnest, there are a few changes that
-need to be made:
-
-- [ ] ✅ Select an [OSI-approved license](https://opensource.org/licenses) for
-  your project. This can easily be achieved through the 'Add File' button on the
-  GitHub UI, naming the file `LICENSE`, and selecting your desired license from
-  the provided list.
-- [ ] Update the `<License name>` placeholder in this file to reflect the name
-  of the license you selected above.
-- [ ] Replace `<INSERT_CONTACT_METHOD>` in
-  [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) with a suitable communication
-  channel.
-- [ ] Change references to `org_name` to the name of the org your repository belongs
-  to (eg. `agntcy`):
-  - [ ] In [`README.md`](README.md)
-  - [ ] In [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- [ ] Change references to `repo_name` to the name of your new repository:
-  - [ ] In [`README.md`](README.md)
-  - [ ] In [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- [ ] Update the Release and Lint `README` badges to point to your project URL.
-- [ ] Update the links to `CONTRIBUTING.md` to point to your project URL:
-  - [ ] In
-    [`.github/ISSUE_TEMPLATE/bug_report.yml`](.github/ISSUE_TEMPLATE/bug_report.yml)
-  - [ ] In
-    [`.github/ISSUE_TEMPLATE/feature_request.yml`](.github/ISSUE_TEMPLATE/feature_request.yml)
-  - [ ] In
-    [`.github/pull_request_template.md`](.github/pull_request_template.md)
-- [ ] Update the `Affected Version` tags in
-  [`.github/ISSUE_TEMPLATE/bug_report.yml`](.github/ISSUE_TEMPLATE/bug_report.yml)
-  if applicable.
-- [ ] Replace the `<project name>` placeholder with the name of your project:
-  - [ ] In [`CONTRIBUTING.md`](CONTRIBUTING.md)
-  - [ ] In [`SECURITY.md`](SECURITY.md)
-- [ ] Add names and contact information for the project maintainers to
-  [`MAINTAINERS.md`](MAINTAINERS.md).
-- [ ] Update the `<project-name>` placeholder in
-  [`.github/CODEOWNERS`](.github/CODEOWNERS) as well as the
-  `<maintainer-team-name>` and `<admin-team-name>` entries.
-- [ ] Delete the release placeholder content in [`CHANGELOG.md`](CHANGELOG.md).
-  We encourage you to [keep a changelog](https://keepachangelog.com/en/1.0.0/).
-- [ ] Configure [`.github/dependabot.yml`](.github/dependabot.yml) for your project's
-  language and tooling dependencies.
-- [ ] In [`.github/settings.yml`](.github/settings.yml), update the following fields:
-  - [ ] `name`: Replace with the repository name for your project
-  - [ ] `description`: A short, 1-2 sentence description of your project
-  - [ ] `teams`: Uncomment and update the GitHub team names and permissions as appropriate
-  - [ ] `branches`: Uncomment and enable branch protection settings for your
-    project _(please **do not** disable branch protection entirely!)_
-- [ ] Replace the generic content in this file with the relevant details about
-  your project.
-- [ ] 🚨 Delete this section of the `README`!
+[![Release](https://img.shields.io/github/v/release/agntcy/dir-sdk-javascript)](CHANGELOG.md)
 
 ## About The Project
 
-Provide some information about what the project is/does.
+Dir JavaScript SDK provides a simple way to interact with the Directory API.
+It allows developers to integrate and use Directory functionality from their applications with ease.
+The SDK supports both JavaScript and TypeScript applications.
+
+**Note for users:** The SDK is intended for use in Node.js applications and will not work in Web applications.
+
+The Directory SDK provides comprehensive access to all Directory APIs with a simple, intuitive interface:
+
+### **Store API**
+- **Record Management**: Push records to the store and pull them by reference
+- **Metadata Operations**: Look up record metadata without downloading full content
+- **Data Lifecycle**: Delete records permanently from the store
+- **Referrer Support**: Push and pull artifacts for existing records
+- **Sync Management**: Manage storage synchronization policies between Directory servers
+
+### **Search API**
+- **Flexible Search**: Search stored records using text, semantic, and structured queries
+- **Advanced Filtering**: Filter results by metadata, content type, and other criteria
+
+### **Routing API**
+- **Network Publishing**: Publish records to make them discoverable across the network
+- **Content Discovery**: List and query published records across the network
+- **Network Management**: Unpublish records to remove them from network discovery
+
+### **Signing and Verification**
+- **Local Signing**: Sign records locally using private keys or OIDC-based authentication.
+  Requires [dirctl](https://github.com/agntcy/dir/releases) binary to perform signing.
+- **Remote Verification**: Verify record signatures using the Directory gRPC API
+
+### **Developer Experience**
+- **Type Safety**: Full type hints for better IDE support and fewer runtime errors
+- **Async Support**: Non-blocking operations with streaming responses for large datasets
+- **Error Handling**: Comprehensive gRPC error handling with detailed error messages
+- **Configuration**: Flexible configuration via environment variables or direct instantiation
 
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+Install the SDK using one of available JS package managers like [npm](https://www.npmjs.com/)
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to
-install them.
+- [NodeJS](https://nodejs.org/en/) - JavaScript runtime
+- [npm](https://www.npmjs.com/) - Package manager
+- [dirctl](https://github.com/agntcy/dir/releases) - Directory CLI binary
+- Directory server instance (see setup below)
 
-- npm
+### 1. Server Setup
 
-  ```sh
-  npm install npm@latest -g
-  ```
+**Option A: Local Development Server**
+
+```bash
+# Clone the repository and start the server using Taskfile
+task server:start
+```
+
+**Option B: Custom Server**
+
+```bash
+# Set your Directory server address
+export DIRECTORY_CLIENT_SERVER_ADDRESS="your-server:8888"
+```
+
+### 2. SDK Installation
+
+```bash
+# Add the Directory SDK
+npm install agntcy-dir
+```
 
 ### Installation
 
-1. Clone the repository
+1. Initialize the project:
+```bash
+npm init -y
+```
 
-   ```sh
-   git clone https://github.com/org_name/repo_name.git
-   ```
-
-2. Install npm packages
-
-   ```sh
-   npm install
-   ```
+2. Add the SDK to your project:
+```bash
+npm install agntcy-dir
+```
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional
-screenshots, code examples and demos work well in this space. You may also link
-to more resources.
+The SDK can be configured via environment variables or direct instantiation:
+
+```js
+// Environment variables (insecure mode)
+process.env.DIRECTORY_CLIENT_SERVER_ADDRESS = "localhost:8888";
+process.env.DIRCTL_PATH = "/path/to/dirctl";
+
+// Environment variables (X.509 authentication)
+process.env.DIRECTORY_CLIENT_SERVER_ADDRESS = "localhost:8888";
+process.env.DIRECTORY_CLIENT_AUTH_MODE = "x509";
+process.env.DIRECTORY_CLIENT_SPIFFE_SOCKET_PATH = "/tmp/agent.sock";
+
+// Environment variables (JWT authentication)
+process.env.DIRECTORY_CLIENT_SERVER_ADDRESS = "localhost:8888";
+process.env.DIRECTORY_CLIENT_AUTH_MODE = "jwt";
+process.env.DIRECTORY_CLIENT_SPIFFE_SOCKET_PATH = "/tmp/agent.sock";
+process.env.DIRECTORY_CLIENT_JWT_AUDIENCE = "spiffe://example.org/dir-server";
+
+// Or configure directly
+import {Config, Client} from 'agntcy-dir';
+
+// Insecure mode (default, for development only)
+const config = new Config(
+    serverAddress="localhost:8888",
+    dirctlPath="/usr/local/bin/dirctl"
+);
+const client = new Client(config);
+
+// X.509 authentication with SPIRE
+const x509Config = new Config(
+    "localhost:8888", 
+    "/usr/local/bin/dirctl",
+    "/tmp/agent.sock",  // SPIFFE socket path
+    "x509"  // auth mode
+);
+const x509Transport = await Client.createGRPCTransport(x509Config);
+const x509Client = new Client(x509Config, x509Transport);
+
+// JWT authentication with SPIRE
+const jwtConfig = new Config(
+    "localhost:8888",
+    "/usr/local/bin/dirctl",
+    "/tmp/agent.sock",  // SPIFFE socket path
+    "jwt",  // auth mode
+    "spiffe://example.org/dir-server"  // JWT audience
+);
+const jwtTransport = await Client.createGRPCTransport(jwtConfig);
+const jwtClient = new Client(jwtConfig, jwtTransport);
+```
+
+### OAuth 2.0 for Directory bearer auth
+
+The SDK supports OIDC/OAuth for Directory bearer authentication on gRPC:
+
+- Interactive login via Authorization Code + PKCE with a loopback callback (`authenticateOAuthPkce()`)
+- Pre-issued access token via `DIRECTORY_CLIENT_AUTH_TOKEN`
+
+Interactive PKCE sessions are cached alongside other Directory tooling at `$XDG_CONFIG_HOME/dirctl/auth-token.json` or `~/.config/dirctl/auth-token.json`. Pre-issued tokens from configuration are used directly and are not written to the cache by the constructor.
+
+Use this mode when your deployment expects a **Bearer access token** on gRPC (for example via a gateway that validates OIDC tokens). Register your IdP application with a **redirect URI** that matches `DIRECTORY_CLIENT_OIDC_REDIRECT_URI` exactly (for example `http://localhost:8484/callback`). The SDK starts a short-lived HTTP server on loopback to receive the authorization redirect.
+
+Some IdPs use **public clients** with PKCE; your IdP may still expect a `client_secret` field in configuration. In that case, use a **random placeholder** from environment variables, not a real secret in source code.
+
+**Important:** The default in-repo Envoy authorization stack validates **GitHub** tokens. OIDC access tokens from your IdP only work if your environment’s gateway or auth service is configured to accept them.
+
+```bash
+export DIRECTORY_CLIENT_AUTH_MODE="oidc"
+export DIRECTORY_CLIENT_SERVER_ADDRESS="directory.example.com:443"
+export DIRECTORY_CLIENT_OIDC_ISSUER="https://your-idp-provider.example.com"
+export DIRECTORY_CLIENT_OIDC_CLIENT_ID="your-app-client-id"
+# Optional placeholder for public clients:
+export DIRECTORY_CLIENT_OIDC_CLIENT_SECRET="random-non-secret-string"
+export DIRECTORY_CLIENT_OIDC_REDIRECT_URI="http://localhost:8484/callback"
+# Optional: comma-separated scopes
+# export DIRECTORY_CLIENT_OIDC_SCOPES="openid,profile,email"
+```
+
+```js
+import { Client } from 'agntcy-dir';
+
+// After exporting the variables above (or building a Config with authMode: 'oidc'):
+const client = new Client();
+await client.authenticateOAuthPkce();
+```
+
+For custom transports, call `Client.createGRPCTransport(oidcConfig, { oidcTokenHolder })` with an `OAuthTokenHolder` (exported from this package). The usual path is `new Client(oidcConfig)`, which wires the holder and transport automatically.
+
+### Usage Examples
+
+See the [Example JavaScript Project](../examples/example-js/) for a complete working example that demonstrates all SDK features.
+
+```bash
+npm install
+npm run example
+```
 
 _For more examples, please refer to the [Documentation](https://example.com) or
-the [Wiki](https://github.com/org_name/repo_name/wiki)_
+the [Wiki](https://github.com/agntcy/dir-sdk-javascript/wiki)_
 
 ## Roadmap
 
-See the [open issues](https://github.com/org_name/repo_name/issues) for a list
+See the [open issues](https://github.com/agntcy/dir-sdk-javascript/issues) for a list
 of proposed features (and known issues).
 
 ## Contributing
@@ -127,17 +200,10 @@ appreciated**. For detailed contributing guidelines, please see
 
 ## License
 
-Distributed under the `<License name>` License. See [LICENSE](LICENSE) for more
+Distributed under the Apache 2.0 License. See [LICENSE](LICENSE) for more
 information.
 
 ## Contact
 
-Your Name - [@github_handle](https://github.com/github_handle) - email
-
 Project Link:
-[https://github.com/org_name/repo_name](https://github.com/org_name/repo_name)
-
-## Acknowledgements
-
-This template was adapted from
-[https://github.com/othneildrew/Best-README-Template](https://github.com/othneildrew/Best-README-Template).
+[https://github.com/agntcy/dir-sdk-javascript](https://github.com/agntcy/dir-sdk-javascript)

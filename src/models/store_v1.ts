@@ -1,0 +1,43 @@
+// Copyright AGNTCY Contributors (https://github.com/agntcy)
+// SPDX-License-Identifier: Apache-2.0
+
+export {
+    file_agntcy_dir_store_v1_store_service,
+    PushReferrerRequest,
+    PushReferrerRequestSchema,
+    PushReferrerResponse,
+    PushReferrerResponseSchema,
+    PullReferrerRequest,
+    PullReferrerRequestSchema,
+    PullReferrerResponse,
+    PullReferrerResponseSchema,
+    StoreService,
+} from '@buf/agntcy_dir.bufbuild_es/agntcy/dir/store/v1/store_service_pb';
+export {
+    file_agntcy_dir_store_v1_sync_service,
+    CreateSyncRequest,
+    CreateSyncRequestSchema,
+    CreateSyncResponse,
+    CreateSyncResponseSchema,
+    ListSyncsRequest,
+    ListSyncsRequestSchema,
+    ListSyncsItem,
+    ListSyncsItemSchema,
+    GetSyncRequest,
+    GetSyncRequestSchema,
+    GetSyncResponse,
+    GetSyncResponseSchema,
+    DeleteSyncRequest,
+    DeleteSyncRequestSchema,
+    DeleteSyncResponse,
+    DeleteSyncResponseSchema,
+    RequestRegistryCredentialsRequest,
+    RequestRegistryCredentialsRequestSchema,
+    RequestRegistryCredentialsResponse,
+    RequestRegistryCredentialsResponseSchema,
+    BasicAuthCredentials,
+    BasicAuthCredentialsSchema,
+    SyncStatus,
+    SyncStatusSchema,
+    SyncService,
+} from '@buf/agntcy_dir.bufbuild_es/agntcy/dir/store/v1/sync_service_pb';

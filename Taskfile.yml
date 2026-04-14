@@ -1,0 +1,93 @@
+# Copyright AGNTCY Contributors (https://github.com/agntcy)
+# SPDX-License-Identifier: Apache-2.0
+
+version: "3"
+
+includes:
+  vars:
+    taskfile: Taskfile.vars.yml
+    flatten: true
+    excludes: [default]
+
+  deps:
+    taskfile: Taskfile.deps.yml
+    dir: "{{ .BIN_DIR }}"
+    flatten: true
+    excludes: [default]
+
+  test-env:
+    taskfile: Taskfile.test-env.yml
+    flatten: true
+    excludes: [default]
+
+tasks:
+  sdk:deps:cicd:iodc-token-generation:
+    desc: Get Fulcio OIDC token for CICD
+    requires:
+      vars: [ CLIENT_ID ]
+    cmds:
+      - |
+        OIDC_TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+           "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sigstore" | jq -r '.value')
+
+        CLIENT_ID="{{.CLIENT_ID}}"
+        PROVIDER_URL="https://token.actions.githubusercontent.com"
+
+        echo "OIDC_PROVIDER_URL=${PROVIDER_URL}"
+        echo "CLIENT_ID=${CLIENT_ID}"
+        echo "OIDC_TOKEN=${OIDC_TOKEN}"
+
+  sdk:build:javascript:
+    desc: Build JavaScript client SDK package
+    deps:
+      - task: sdk:deps:javascript
+    cmds:
+      - npm run build
+    preconditions:
+      - which npm
+
+  sdk:deps:javascript:
+    desc: Install deps for JavaScript SDK package
+    deps:
+      - deps:dir-ctl
+      - deps:cosign
+    cmds:
+      - npm install
+    preconditions:
+      - which npm
+
+  sdk:test-env:create:
+    desc: Create Kubernetes cluster test environment
+    cmds:
+      - task: test-env:kubernetes:local
+        vars:
+          DIRECTORY_SERVER_PUBLICATION_SCHEDULER_INTERVAL: 1s
+          DIRECTORY_SERVER_OASF_API_VALIDATION_SCHEMA_URL: "https://schema.oasf.outshift.com"
+
+  sdk:test-env:delete:
+    desc: Delete Kubernetes cluster test environment
+    cmds:
+      - task: test-env:kubernetes:local:cleanup
+
+  sdk:test:javascript:
+    desc: Test javascript client SDK package
+    deps:
+      - task: sdk:deps:javascript
+    env:
+      KIND_CLUSTER_NAME: "sdk-js-test"
+    preconditions:
+      - which npm
+    cmds:
+      - task: sdk:test-env:create
+      - defer: { task: sdk:test-env:delete }
+      - |
+        export COSIGN_PATH="$(printf "%s" "${COSIGN_PATH:-{{ .COSIGN_BIN }}}")"
+        export DIRCTL_IMAGE_TAG="{{ .IMAGE_TAG }}"
+
+        # Run SDK tests
+        npm run test
+
+        # Run SDK example to verify it works
+        #cd {{ .ROOT_DIR }}/sdk/examples/example-js
+        #npm install
+        #npm run example

@@ -1,8 +1,11 @@
 # Changelog
 
-## 0.0.1 (2025-02-04)
+[agntcy/dir]: https://github.com/agntcy/dir
+[agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
-### Feat
+## 1.1.0 (2026-04-10)
 
-- Add commitizen
-- Initial Commit to create the scaffolding to template repo and relevant github actions
+### Added
+
+The Directory JavaScript SDK has been migrated from the [agntcy/dir][agntcy/dir]
+repository to the [agntcy/dir-sdk-javascript][agntcy/dir-sdk-javascript] repository.
