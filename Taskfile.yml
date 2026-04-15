@@ -81,8 +81,8 @@ tasks:
       - task: sdk:test-env:create
       - defer: { task: sdk:test-env:delete }
       - |
+        export DIRCTL_IMAGE_TAG="{{ .DIRCTL_IMAGE_TAG }}"
         export COSIGN_PATH="$(printf "%s" "${COSIGN_PATH:-{{ .COSIGN_BIN }}}")"
-        export DIRCTL_IMAGE_TAG="{{ .IMAGE_TAG }}"
 
         # Run SDK tests
         npm run test

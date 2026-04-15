@@ -3,7 +3,7 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
-## 1.1.0 (2026-04-10)
+## 1.2.1 (2026-04-15)
 
 ### Added
 
