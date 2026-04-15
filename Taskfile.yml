@@ -88,9 +88,9 @@ tasks:
         npm run test
 
         # Run SDK example to verify it works
-        #cd {{ .ROOT_DIR }}/sdk/examples/example-js
-        #npm install
-        #npm run example
+        cd {{ .ROOT_DIR }}/examples
+        npm install
+        npm run example
 
   sdk:release:javascript:
     desc: Release javascript client SDK package
