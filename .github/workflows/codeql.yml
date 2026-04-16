@@ -1,0 +1,85 @@
+# Copyright AGNTCY Contributors (https://github.com/agntcy)
+# SPDX-License-Identifier: Apache-2.0
+
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "42 5 * * 6"
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: Analyze
+    # Runner size impacts CodeQL analysis time. To learn more, please see:
+    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
+    #   - https://gh.io/supported-runners-and-hardware-resources
+    #   - https://gh.io/using-larger-runners (GitHub.com only)
+    # Consider using larger runners or machines with greater resources for possible analysis time improvements.
+    runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # required to fetch internal or private CodeQL packs
+      packages: read
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: "24.x"
+          cache: "npm"
+          cache-dependency-path: "**/package*.json"
+
+      - name: Install JavaScript/TypeScript dependencies
+        shell: bash
+        run: |
+          echo "📦 Installing JavaScript/TypeScript dependencies..."
+          # Install dependencies for JavaScript SDK
+          if [ -f "package.json" ]; then
+            npm ci || npm install
+          fi
+          # Install dependencies for examples
+          if [ -f "examples/package.json" ]; then
+            cd examples
+            npm ci || npm install
+            cd ..
+          fi
+          echo "✅ JavaScript/TypeScript dependencies installed"
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: +security-extended,security-and-quality
+          config: |
+            name: "CodeQL Config"
+            queries:
+              - uses: security-extended
+              - uses: security-and-quality
+            query-filters:
+              - exclude:
+                  # Helm values files use empty strings as defaults
+                  id: js/empty-password-in-configuration-file
+            paths-ignore:
+              - "**/*_pb.js"
+              - "**/*_pb.d.ts"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
+        with:
+          category: "/language:${{matrix.language}}"
