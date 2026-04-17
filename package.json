@@ -2,13 +2,13 @@
   "name": "agntcy-dir",
   "version": "1.2.1",
   "description": "Directory SDK",
-  "homepage": "https://github.com/agntcy/dir",
+  "homepage": "https://github.com/agntcy/dir-sdk-javascript",
   "bugs": {
-    "url": "https://github.com/agntcy/dir/issues"
+    "url": "https://github.com/agntcy/dir-sdk-javascript/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agntcy/dir.git"
+    "url": "git+https://github.com/agntcy/dir-sdk-javascript.git"
   },
   "license": "Apache-2.0",
   "keywords": [
