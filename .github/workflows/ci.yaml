@@ -79,6 +79,7 @@ jobs:
     needs:
       - changes
       - test
+      - release
     runs-on: ubuntu-latest
     steps:
       - name: Echo Success
