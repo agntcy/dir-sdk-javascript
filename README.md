@@ -1,14 +1,14 @@
 # Directory JavaScript SDK
 
-[![Release](https://img.shields.io/github/v/release/agntcy/dir-sdk-javascript)](CHANGELOG.md)
-
-## About The Project
+## Overview
 
 Dir JavaScript SDK provides a simple way to interact with the Directory API.
 It allows developers to integrate and use Directory functionality from their applications with ease.
 The SDK supports both JavaScript and TypeScript applications.
 
 **Note for users:** The SDK is intended for use in Node.js applications and will not work in Web applications.
+
+## Features
 
 The Directory SDK provides comprehensive access to all Directory APIs with a simple, intuitive interface:
 
@@ -39,41 +39,9 @@ The Directory SDK provides comprehensive access to all Directory APIs with a sim
 - **Error Handling**: Comprehensive gRPC error handling with detailed error messages
 - **Configuration**: Flexible configuration via environment variables or direct instantiation
 
-## Getting Started
+## Installation
 
 Install the SDK using one of available JS package managers like [npm](https://www.npmjs.com/)
-
-### Prerequisites
-
-- [NodeJS](https://nodejs.org/en/) - JavaScript runtime
-- [npm](https://www.npmjs.com/) - Package manager
-- [dirctl](https://github.com/agntcy/dir/releases) - Directory CLI binary
-- Directory server instance (see setup below)
-
-### 1. Server Setup
-
-**Option A: Local Development Server**
-
-```bash
-# Clone the repository and start the server using Taskfile
-task server:start
-```
-
-**Option B: Custom Server**
-
-```bash
-# Set your Directory server address
-export DIRECTORY_CLIENT_SERVER_ADDRESS="your-server:8888"
-```
-
-### 2. SDK Installation
-
-```bash
-# Add the Directory SDK
-npm install agntcy-dir
-```
-
-### Installation
 
 1. Initialize the project:
 ```bash
@@ -85,7 +53,7 @@ npm init -y
 npm install agntcy-dir
 ```
 
-## Usage
+## Configuration
 
 The SDK can be configured via environment variables or direct instantiation:
 
@@ -174,6 +142,38 @@ await client.authenticateOAuthPkce();
 
 For custom transports, call `Client.createGRPCTransport(oidcConfig, { oidcTokenHolder })` with an `OAuthTokenHolder` (exported from this package). The usual path is `new Client(oidcConfig)`, which wires the holder and transport automatically.
 
+## Getting Started
+
+### Prerequisites
+
+- [NodeJS](https://nodejs.org/en/) - JavaScript runtime
+- [npm](https://www.npmjs.com/) - Package manager
+- [dirctl](https://github.com/agntcy/dir/releases) - Directory CLI binary
+- Directory server instance (see setup below)
+
+### 1. Server Setup
+
+**Option A: Local Development Server**
+
+```bash
+# Clone the repository and start the server using Taskfile
+task server:start
+```
+
+**Option B: Custom Server**
+
+```bash
+# Set your Directory server address
+export DIRECTORY_CLIENT_SERVER_ADDRESS="your-server:8888"
+```
+
+### 2. SDK Installation
+
+```bash
+# Add the Directory SDK
+npm install agntcy-dir
+```
+
 ### Usage Examples
 
 See the [Example JavaScript Project](../examples/example-js/) for a complete working example that demonstrates all SDK features.
@@ -182,28 +182,3 @@ See the [Example JavaScript Project](../examples/example-js/) for a complete wor
 npm install
 npm run example
 ```
-
-_For more examples, please refer to the [Documentation](https://example.com) or
-the [Wiki](https://github.com/agntcy/dir-sdk-javascript/wiki)_
-
-## Roadmap
-
-See the [open issues](https://github.com/agntcy/dir-sdk-javascript/issues) for a list
-of proposed features (and known issues).
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to
-learn, inspire, and create. Any contributions you make are **greatly
-appreciated**. For detailed contributing guidelines, please see
-[CONTRIBUTING.md](CONTRIBUTING.md)
-
-## License
-
-Distributed under the Apache 2.0 License. See [LICENSE](LICENSE) for more
-information.
-
-## Contact
-
-Project Link:
-[https://github.com/agntcy/dir-sdk-javascript](https://github.com/agntcy/dir-sdk-javascript)
