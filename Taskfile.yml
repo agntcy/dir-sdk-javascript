@@ -56,6 +56,21 @@ tasks:
     preconditions:
       - which npm
 
+  sdk:deps:javascript:example:
+    desc: Install deps for JavaScript SDK example package
+    internal: true
+    dir: ./examples
+    cmds:
+      - npm install
+    preconditions:
+      - which npm
+
+  sdk:tidy:
+    desc: Install deps for SDK packages
+    cmds:
+      - task: sdk:deps:javascript
+      - task: sdk:deps:javascript:example
+
   sdk:test-env:create:
     desc: Create Kubernetes cluster test environment
     cmds:
