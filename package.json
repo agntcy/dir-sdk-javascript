@@ -34,8 +34,6 @@
   "scripts": {
     "build": "rollup -c && api-extractor run --local --verbose --diagnostics",
     "clean": "rm -rf dist",
-    "lint": "eslint '**/*.ts'",
-    "fix": "eslint '**/*.ts' --fix",
     "pretest": "npm run build",
     "test": "vitest run"
   },
@@ -57,7 +55,6 @@
     "rollup-plugin-typescript2": "^0.37.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.58.0",
     "uuid": "^11.1.0",
     "vitest": "^3.2.4",
     "workerpool": "^10.0.1"
