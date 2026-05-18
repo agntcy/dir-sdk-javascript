@@ -11,7 +11,7 @@ Create a branch for the new release:
     - `package.json`
     - `.github/ISSUE_TEMPLATE/bug_report.yml`
 2. Update the dependencies if necessary:
-    - [@buf/agntcy_dir.bufbuild_es](https://buf.build/agntcy/dir/sdks/v1.2.0%3Abufbuild/es?version=v2.9.0) (Buf SDK)
+    - [@buf/agntcy_dir.bufbuild_es](https://buf.build/agntcy/dir/sdks/v1.3.0%3Abufbuild/es?version=v2.9.0) (Buf SDK)
     - `.github/workflows/ci.yaml` (dir & dir-ctl version)
 3. Add an entry to `CHANGELOG.md`
 
@@ -28,6 +28,6 @@ To trigger the release workflow, create and push the release tag
 for the last commit:
 
 ```sh
-git tag -a v1.2.1
-git push origin v1.2.1
+git tag -a v1.3.0
+git push origin v1.3.0
 ```
