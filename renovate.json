@@ -32,6 +32,7 @@
   ],
   "enabled": true,
   "minimumReleaseAge": "7 days",
+  "prCreation": "not-pending",
   "schedule": ["before 6am on Monday"],
   "enabledManagers": [
     "custom.regex",
