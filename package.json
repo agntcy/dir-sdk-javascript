@@ -37,30 +37,30 @@
     "pretest": "npm run build",
     "test": "vitest run"
   },
-  "packageManager": "npm@11.12.1",
+  "packageManager": "npm@11.15.0",
   "dependencies": {
     "@buf/agntcy_dir.bufbuild_es": "2.9.0-20260505171211-963d5edc7bb0.1",
-    "@bufbuild/protobuf": "^2.9.0",
+    "@bufbuild/protobuf": "^2.12.0",
     "@connectrpc/connect": "^2.1.0",
     "@connectrpc/connect-node": "^2.1.0",
-    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/grpc-js": "^1.14.4",
     "spiffe": "^0.5.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.58.0",
+    "@microsoft/api-extractor": "^7.58.7",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
-    "@types/node": "^22.19.1",
+    "@types/node": "^22.19.19",
     "@types/uuid": "^10.0.0",
     "rollup-plugin-typescript2": "^0.37.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "uuid": "^11.1.1",
     "vitest": "^3.2.4",
-    "workerpool": "^10.0.1"
+    "workerpool": "^10.0.2"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.60.1"
+    "@rollup/rollup-linux-x64-gnu": "4.60.4"
   },
   "engines": {
     "node": ">=20.0.0"
