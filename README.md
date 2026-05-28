@@ -142,7 +142,7 @@ const client = new Client();
 await client.authenticateOAuthPkce();
 ```
 
-For custom transports, call `Client.createGRPCTransport(oidcConfig, { oidcTokenHolder })` with an `OAuthTokenHolder` (exported from this package). The usual path is `new Client(oidcConfig)`, which wires the holder and transport automatically.
+For custom transports, call `Client.createGRPCTransport(oidcConfig, { oidcTokenHolder: client.oauthSession.oauthHolder })` after constructing a `Client` in OIDC mode, or pass a holder from your own OIDC flow. The usual path is `new Client(oidcConfig)`, which wires the session and transport automatically.
 
 ## Getting Started
 

@@ -10,7 +10,7 @@
  * DIRECTORY_CLIENT_TLS_SKIP_VERIFY.
  */
 
-import { Client, Config, OAuthPkceError, TokenCache, models } from "agntcy-dir";
+import { Client, Config, OAuthPkceError, models } from "agntcy-dir";
 
 const DEFAULT_OIDC_ISSUER = "https://dev.idp.ads.outshift.io";
 const DEFAULT_SERVER_ADDRESS = "dev.gateway.ads.outshift.io:443";
@@ -49,12 +49,12 @@ function parseArgs(argv) {
   return out;
 }
 
-function hasUsableOidcTokenWithoutPkce() {
+function hasUsableOidcTokenWithoutPkce(config) {
   const authToken = (process.env.DIRECTORY_CLIENT_AUTH_TOKEN ?? "").trim();
   if (authToken) {
     return true;
   }
-  return new TokenCache().getValidToken() !== undefined;
+  return new Client(config).hasCachedOAuthToken();
 }
 
 function parseOidcCallbackPort() {
@@ -103,7 +103,7 @@ async function buildClient() {
   const config = buildConfig();
   const client = new Client(config);
 
-  if (hasUsableOidcTokenWithoutPkce()) {
+  if (hasUsableOidcTokenWithoutPkce(config)) {
     console.log("Using cached OIDC token.");
     return client;
   }

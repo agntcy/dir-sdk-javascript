@@ -8,8 +8,9 @@ import { env } from 'node:process';
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { Client, Config, TokenCache, TOKEN_CACHE_FILE } from '../src/client/client.js';
-import * as oauthPkce from '../src/client/oauthPkce.js';
+import { Client, Config } from '../src/index.js';
+import * as oauthPkce from '../src/client/auth/oauthPkce.js';
+import { TokenCache, TOKEN_CACHE_FILE } from '../src/client/auth/tokenCache.js';
 
 describe('OIDC auth config', () => {
   const originalEnv = { ...env };
@@ -77,7 +78,7 @@ describe('OIDC auth client', () => {
     );
     const client = new Client(config);
 
-    expect(client['oauthHolder']?.getAccessToken()).toBe('preissued-token');
+    expect(client.oauthSession.oauthHolder?.getAccessToken()).toBe('preissued-token');
     expect(fetchSpy).not.toHaveBeenCalled();
     expect(loginSpy).not.toHaveBeenCalled();
     cacheSpy.mockRestore();
@@ -96,7 +97,7 @@ describe('OIDC auth client', () => {
     );
     const client = new Client(config);
 
-    expect(() => client['oauthHolder']?.getAccessToken()).toThrow(
+    expect(() => client.oauthSession.oauthHolder?.getAccessToken()).toThrow(
       /DIRECTORY_CLIENT_AUTH_TOKEN/,
     );
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -137,7 +138,7 @@ describe('OIDC auth client', () => {
     );
     const client = new Client(config);
 
-    expect(client['oauthHolder']?.getAccessToken()).toBe('cached-token');
+    expect(client.oauthSession.oauthHolder?.getAccessToken()).toBe('cached-token');
   });
 
   test('authenticateOAuthPkce updates access token', async () => {
@@ -172,7 +173,7 @@ describe('OIDC auth client', () => {
     const client = new Client(config);
     await client.authenticateOAuthPkce();
 
-    expect(client['oauthHolder']?.getAccessToken()).toBe('fresh-token');
+    expect(client.oauthSession.oauthHolder?.getAccessToken()).toBe('fresh-token');
     expect(oauthPkce.fetchOpenidConfiguration).toHaveBeenCalledOnce();
     expect(oauthPkce.runLoopbackPkceLogin).toHaveBeenCalledOnce();
   });
