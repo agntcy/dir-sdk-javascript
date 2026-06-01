@@ -407,6 +407,13 @@ describe('Client', () => {
         const response = await client.verify(
           create(models.sign_v1.VerifyRequestSchema, {
             recordRef: ref,
+            provider: {
+              request: {
+                case: 'any',
+                value: {
+                },
+              },
+            },
           }),
         );
 
