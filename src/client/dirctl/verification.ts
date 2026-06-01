@@ -1,7 +1,7 @@
 // Copyright AGNTCY Contributors (https://github.com/agntcy)
 // SPDX-License-Identifier: Apache-2.0
 
-import { closeSync, mkdtempSync, openSync, readFileSync, rmSync } from 'node:fs';
+import { closeSync, mkdtempSync, openSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -136,7 +136,12 @@ export function verifyRecord(
         throw new Error('unsupported provider was supplied');
     }
 
+    if (!existsSync(outputPath)) {
+      throw new Error('verification output file was not created');
+    }
+
     const jsonContent = readFileSync(outputPath, 'utf8');
+
     return fromJsonString(models.sign_v1.VerifyResponseSchema, jsonContent);
   } catch (e) {
     throw new Error(`Failed to parse verification response: ${e}`);
