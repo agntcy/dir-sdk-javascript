@@ -18,7 +18,7 @@ function runVerifyCommand(
 ): void {
   const [command, commandArgs] = config.getCommandAndArgs(args);
   const output = spawnSync(command, commandArgs, {
-    env: { ...env },
+    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': config.serverAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
@@ -133,8 +133,7 @@ export function verifyRecord(
         verifyWithAny(config, cid, request.provider.request.value, resolvedOutputPath);
         break;
       default:
-        verifyWithAny(config, cid, undefined, resolvedOutputPath);
-        break;
+        throw new Error('unsupported provider was supplied');
     }
 
     const jsonContent = readFileSync(outputPath, 'utf8');

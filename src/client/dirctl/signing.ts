@@ -12,17 +12,21 @@ export function signWithKey(
   cid: string,
   req: models.sign_v1.SignWithKey,
 ): SpawnSyncReturns<string> {
+  // NOTE: dirctl appends :80 or :443 to server address if has http or https:// prefix
+  const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
+
   const shell_env = { ...env };
   shell_env['COSIGN_PASSWORD'] = req.password ? String(req.password) : '';
   if (config.dockerConfig) {
     config.dockerConfig.envs.set('COSIGN_PASSWORD', shell_env['COSIGN_PASSWORD']);
+    config.dockerConfig.envs.set('DIRECTORY_CLIENT_SERVER_ADDRESS', dirctlServerAddress);
   }
 
   const args = ['sign', cid, '--key', req.privateKey];
   const [command, commandArgs] = config.getCommandAndArgs(args);
 
   return spawnSync(command, commandArgs, {
-    env: shell_env,
+    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
@@ -64,8 +68,11 @@ export function signWithOidc(
 
   const [command, commandArgs] = config.getCommandAndArgs(args);
 
+  // NOTE: dirctl appends :80 or :443 to server address if has http or https:// prefix
+  const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
+
   return spawnSync(command, commandArgs, {
-    env: { ...env },
+    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
