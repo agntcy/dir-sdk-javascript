@@ -20,6 +20,7 @@ const rollupPlugins = [
   json({
     preferConst: true,
   }),
+  fixBufEsmImportSpecifiers(),
 ];
 
 /** Keep npm dependencies external so Rollup does not rewrite `this` in bundled deps. */
@@ -38,6 +39,31 @@ function isExternal(id) {
   return externalPackages.some(
     (dep) => id === dep || id.startsWith(`${dep}/`),
   );
+}
+
+/**
+ * Node ESM requires explicit .js extensions for @buf protobuf subpath imports.
+ */
+function fixBufEsmImportSpecifiers() {
+  return {
+    name: 'fix-buf-esm-import-specifiers',
+    renderChunk(code, chunk) {
+      if (!chunk.fileName.endsWith('.mjs')) {
+        return null;
+      }
+      const updated = code.replace(
+        /from (['"])(@buf\/[^'"]+)(['"])/g,
+        (_, quote, specifier, endQuote) =>
+          specifier.endsWith('.js')
+            ? `from ${quote}${specifier}${endQuote}`
+            : `from ${quote}${specifier}.js${endQuote}`,
+      );
+      if (updated === code) {
+        return null;
+      }
+      return { code: updated, map: null };
+    },
+  };
 }
 
 export default [
