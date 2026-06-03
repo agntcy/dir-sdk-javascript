@@ -132,6 +132,7 @@ export class CachedToken {
   }
 }
 
+/** @internal */
 export class TokenCache {
   readonly cacheDir: string;
 

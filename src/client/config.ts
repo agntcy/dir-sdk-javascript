@@ -4,6 +4,11 @@
 import { existsSync } from 'node:fs';
 import { env } from 'node:process';
 
+/**
+ * Authentication mode for Directory client connections.
+ *
+ * @public
+ */
 export type AuthMode = '' | 'x509' | 'jwt' | 'tls' | 'oidc';
 
 function parseBoolEnv(value: string | undefined, defaultVal: boolean): boolean {
@@ -37,6 +42,11 @@ function parseCommaScopes(value: string | undefined, defaultList: string[]): str
     .filter(Boolean);
 }
 
+/**
+ * Docker invocation settings for running dirctl in a container.
+ *
+ * @public
+ */
 export class DockerConfig {
   static DEFAULT_DIRCTL_IMAGE = 'ghcr.io/agntcy/dir-ctl';
   static DEFAULT_DIRCTL_IMAGE_TAG = 'latest';
@@ -98,6 +108,8 @@ export class DockerConfig {
 
 /**
  * Configuration class for the AGNTCY Directory client.
+ *
+ * @public
  */
 export class Config {
   static DEFAULT_SERVER_ADDRESS = '127.0.0.1:8888';

@@ -8,6 +8,11 @@ import * as https from 'node:https';
 import { platform } from 'node:process';
 import { URL } from 'node:url';
 
+/**
+ * Error thrown when OAuth PKCE authentication fails.
+ *
+ * @public
+ */
 export class OAuthPkceError extends Error {
   constructor(message: string) {
     super(message);
@@ -192,6 +197,11 @@ function openBrowser(url: string): void {
   }
 }
 
+/**
+ * Holds an OAuth access token for Connect transport interceptors.
+ *
+ * @public
+ */
 export class OAuthTokenHolder {
   private accessToken: string | undefined;
 

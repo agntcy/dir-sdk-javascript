@@ -39,15 +39,19 @@ export function cachedTokenFromResponse(
   );
 }
 
-/** Coordinates OIDC token state with interactive PKCE flow and cache. */
+/**
+ * Coordinates OIDC token state with interactive PKCE flow and cache.
+ *
+ * @public
+ */
 export class OAuthSessionManager {
   readonly config: Config;
   private readonly tokenCache: TokenCache;
   private _oauthHolder: OAuthTokenHolder | null = null;
 
-  constructor(config: Config, tokenCache?: TokenCache) {
+  constructor(config: Config) {
     this.config = config;
-    this.tokenCache = tokenCache ?? new TokenCache();
+    this.tokenCache = new TokenCache();
 
     if (this.config.authMode === 'oidc') {
       this._oauthHolder = new OAuthTokenHolder();
