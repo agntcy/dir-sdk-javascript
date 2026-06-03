@@ -9,10 +9,16 @@ import { verifyRecord } from '../dirctl/verification.js';
 import * as models from '../../models/index.js';
 
 export class SignService {
+  private readonly config: Config;
+  private readonly signClient: Client<typeof models.sign_v1.SignService>;
+
   constructor(
-    private readonly config: Config,
-    private readonly signClient: Client<typeof models.sign_v1.SignService>,
-  ) {}
+    config: Config,
+    signClient: Client<typeof models.sign_v1.SignService>,
+  ) {
+    this.config = config;
+    this.signClient = signClient;
+  }
 
   sign(req: models.sign_v1.SignRequest): void {
     signRecord(this.config, req);

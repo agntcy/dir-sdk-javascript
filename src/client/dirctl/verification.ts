@@ -120,7 +120,7 @@ export function verifyRecord(
   }
 
   try {
-    const cid = request.recordRef?.cid || '';
+    const cid = request.recordRef?.cid ?? '';
 
     switch (request.provider?.request.case) {
       case 'oidc':

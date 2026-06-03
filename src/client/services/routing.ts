@@ -7,9 +7,11 @@ import * as models from '../../models/index.js';
 import { collectStream } from './base.js';
 
 export class RoutingService {
-  constructor(
-    private readonly routingClient: Client<typeof models.routing_v1.RoutingService>,
-  ) {}
+  private readonly routingClient: Client<typeof models.routing_v1.RoutingService>;
+
+  constructor(routingClient: Client<typeof models.routing_v1.RoutingService>) {
+    this.routingClient = routingClient;
+  }
 
   async publish(request: models.routing_v1.PublishRequest): Promise<void> {
     await this.routingClient.publish(request);

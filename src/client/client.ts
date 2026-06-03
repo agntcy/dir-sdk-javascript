@@ -49,9 +49,6 @@ export class Client {
   eventService: EventService;
   namingService: NamingService;
 
-  constructor();
-  constructor(config?: Config);
-  constructor(config?: Config, grpcTransport?: Transport);
   constructor(config?: Config, grpcTransport?: Transport) {
     const resolvedConfig = config ?? Config.loadFromEnv();
     this.config = resolvedConfig;

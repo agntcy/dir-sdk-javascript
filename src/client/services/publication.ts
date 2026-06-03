@@ -7,11 +7,15 @@ import * as models from '../../models/index.js';
 import { collectStream } from './base.js';
 
 export class PublicationService {
+  private readonly publicationClient: Client<
+    typeof models.routing_v1.PublicationService
+  >;
+
   constructor(
-    private readonly publicationClient: Client<
-      typeof models.routing_v1.PublicationService
-    >,
-  ) {}
+    publicationClient: Client<typeof models.routing_v1.PublicationService>,
+  ) {
+    this.publicationClient = publicationClient;
+  }
 
   async create_publication(
     request: models.routing_v1.PublishRequest,

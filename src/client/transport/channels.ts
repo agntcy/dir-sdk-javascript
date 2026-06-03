@@ -19,7 +19,7 @@ function convertToPEM(bytes: Uint8Array, label: string): string {
     binary += String.fromCharCode(bytes[i]);
   }
   const base64String = btoa(binary);
-  const lines = base64String.match(/.{1,64}/g) || [];
+  const lines = base64String.match(/.{1,64}/g) ?? [];
   return [`-----BEGIN ${label}-----`, ...lines, `-----END ${label}-----`].join('\n');
 }
 

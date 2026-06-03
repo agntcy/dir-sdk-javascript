@@ -16,9 +16,9 @@ export function signWithKey(
   const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
 
   const shell_env = { ...env };
-  shell_env['COSIGN_PASSWORD'] = req.password ? String(req.password) : '';
+  shell_env.COSIGN_PASSWORD = req.password ? String(req.password) : '';
   if (config.dockerConfig) {
-    config.dockerConfig.envs.set('COSIGN_PASSWORD', shell_env['COSIGN_PASSWORD']);
+    config.dockerConfig.envs.set('COSIGN_PASSWORD', shell_env.COSIGN_PASSWORD);
     config.dockerConfig.envs.set('DIRECTORY_CLIENT_SERVER_ADDRESS', dirctlServerAddress);
   }
 
@@ -79,7 +79,7 @@ export function signWithOidc(
 }
 
 export function signRecord(config: Config, req: models.sign_v1.SignRequest): void {
-  const cid = req.recordRef?.cid || '';
+  const cid = req.recordRef?.cid ?? '';
   let output: SpawnSyncReturns<string>;
 
   switch (req.provider?.request.case) {
@@ -94,6 +94,6 @@ export function signRecord(config: Config, req: models.sign_v1.SignRequest): voi
   }
 
   if (output.status !== 0) {
-    throw output.error || output.stderr;
+    throw output.error ?? output.stderr;
   }
 }

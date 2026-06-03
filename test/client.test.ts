@@ -340,7 +340,7 @@ describe('Client', () => {
 
     try {
       // Generate key pair
-      const cosignPath = env['COSIGN_PATH'] || 'cosign';
+      const cosignPath = env.COSIGN_PATH ?? 'cosign';
       execFileSync(cosignPath, ["generate-key-pair"], {
         env: { ...shellEnv, COSIGN_PASSWORD: keyPassword },
         encoding: 'utf8',
@@ -355,9 +355,9 @@ describe('Client', () => {
       }
 
       // Read configuration data
-      const token = shellEnv['OIDC_TOKEN'] || '';
-      const providerUrl = shellEnv['OIDC_PROVIDER_URL'] || '';
-      const clientId = shellEnv['OIDC_CLIENT_ID'] || 'sigstore';
+      const token = shellEnv.OIDC_TOKEN ?? '';
+      const providerUrl = shellEnv.OIDC_PROVIDER_URL ?? '';
+      const clientId = shellEnv.OIDC_CLIENT_ID ?? 'sigstore';
 
       // Create signing providers using file path reference
       // The CLI will load the key from the file path directly
@@ -509,7 +509,7 @@ describe('Client', () => {
     const createResponse = await client.create_sync(
       create(models.store_v1.CreateSyncRequestSchema, {
         remoteDirectoryUrl:
-          env['DIRECTORY_SERVER_PEER1_ADDRESS'] || '0.0.0.0:8891',
+          env.DIRECTORY_SERVER_PEER1_ADDRESS ?? '0.0.0.0:8891',
       }),
     );
     expect(createResponse).toBeTypeOf(
@@ -554,7 +554,7 @@ describe('Client', () => {
     const recordRefs = await client.push(records);
 
     const pool = workerpool(__dirname + '/listen_worker.ts');
-    let args = ["pull", recordRefs[0].cid];
+    const args = ["pull", recordRefs[0].cid];
 
     if (config.spiffeEndpointSocket !== '') {
       args.push(...["--spiffe-socket-path", config.spiffeEndpointSocket]);
@@ -568,7 +568,7 @@ describe('Client', () => {
       expect.fail(`pullRecordsBackground execution failed: ${error}`)
     }
 
-    let events = client.listen(
+    const events = client.listen(
       create(models.events_v1.ListenRequestSchema, {})
     );
 

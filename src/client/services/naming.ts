@@ -6,9 +6,11 @@ import type { Client } from '@connectrpc/connect';
 import * as models from '../../models/index.js';
 
 export class NamingService {
-  constructor(
-    private readonly namingClient: Client<typeof models.naming_v1.NamingService>,
-  ) {}
+  private readonly namingClient: Client<typeof models.naming_v1.NamingService>;
+
+  constructor(namingClient: Client<typeof models.naming_v1.NamingService>) {
+    this.namingClient = namingClient;
+  }
 
   async resolve(
     request: models.naming_v1.ResolveRequest,

@@ -7,7 +7,11 @@ import * as models from '../../models/index.js';
 import { collectStream } from './base.js';
 
 export class SyncService {
-  constructor(private readonly syncClient: Client<typeof models.store_v1.SyncService>) {}
+  private readonly syncClient: Client<typeof models.store_v1.SyncService>;
+
+  constructor(syncClient: Client<typeof models.store_v1.SyncService>) {
+    this.syncClient = syncClient;
+  }
 
   async create_sync(
     request: models.store_v1.CreateSyncRequest,
