@@ -22,9 +22,23 @@ const rollupPlugins = [
   }),
 ];
 
+/** Keep npm dependencies external so Rollup does not rewrite `this` in bundled deps. */
 const externalPackages = [
-  'spiffe',
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.optionalDependencies ?? {}),
 ];
+
+function isExternal(id) {
+  if (id.startsWith('node:')) {
+    return true;
+  }
+  if (id.startsWith('.') || id.startsWith('/') || id.startsWith('\0')) {
+    return false;
+  }
+  return externalPackages.some(
+    (dep) => id === dep || id.startsWith(`${dep}/`),
+  );
+}
 
 export default [
   // Cross ES module (dist/index.mjs)
@@ -36,7 +50,7 @@ export default [
       sourcemap: true,
     },
     plugins: rollupPlugins,
-    external: externalPackages,
+    external: isExternal,
   },
 
   // Cross CJS module (dist/index.cjs)
@@ -48,6 +62,6 @@ export default [
       sourcemap: true,
     },
     plugins: rollupPlugins,
-    external: externalPackages,
+    external: isExternal,
   },
 ];
