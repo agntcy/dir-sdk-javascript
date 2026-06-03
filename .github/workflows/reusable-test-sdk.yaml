@@ -64,11 +64,10 @@ jobs:
         env:
           CLIENT_ID: "https://github.com/${{ github.repository }}/.github/workflows/reusable-test-sdk.yaml@${{ github.ref }}"
         run: |
-          task sdk:deps:cicd:iodc-token-generation >> $GITHUB_ENV
+          task deps:cicd:iodc-token-generation >> $GITHUB_ENV
 
       - name: Test JavaScript SDK
         env:
           DIR_CHART_VERSION: ${{ inputs.dir_chart_version }}
           DIRCTL_IMAGE_TAG: ${{ inputs.dirctl_image_tag }}
-        run: |
-          task sdk:test:javascript
+        run: task test
