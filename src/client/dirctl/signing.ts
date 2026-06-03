@@ -26,7 +26,7 @@ export function signWithKey(
   const [command, commandArgs] = config.getCommandAndArgs(args);
 
   return spawnSync(command, commandArgs, {
-    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
+    env: { ...env, DIRECTORY_CLIENT_SERVER_ADDRESS: dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
@@ -41,10 +41,7 @@ export function signWithOidc(
   if (req.idToken !== '') {
     args.push(...['--oidc-token', req.idToken]);
   }
-  if (
-    req.options?.oidcProviderUrl !== undefined &&
-    req.options.oidcProviderUrl !== ''
-  ) {
+  if (req.options?.oidcProviderUrl !== undefined && req.options.oidcProviderUrl !== '') {
     args.push(...['--oidc-provider-url', req.options.oidcProviderUrl]);
   }
   if (req.options?.oidcClientId !== undefined && req.options.oidcClientId !== '') {
@@ -72,7 +69,7 @@ export function signWithOidc(
   const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
 
   return spawnSync(command, commandArgs, {
-    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
+    env: { ...env, DIRECTORY_CLIENT_SERVER_ADDRESS: dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });

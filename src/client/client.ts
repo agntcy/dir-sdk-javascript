@@ -1,22 +1,11 @@
 // Copyright AGNTCY Contributors (https://github.com/agntcy)
 // SPDX-License-Identifier: Apache-2.0
 
-import {
-  Client as GrpcClient,
-  createClient,
-  type Transport,
-} from '@connectrpc/connect';
+import { Client as GrpcClient, createClient, type Transport } from '@connectrpc/connect';
 import { createGrpcTransport as createConnectGrpcTransport } from '@connectrpc/connect-node';
 
-import type {
-  Record,
-  RecordMeta,
-  RecordRef,
-} from '../models/core_v1';
-import type {
-  ListenRequest,
-  ListenResponse,
-} from '../models/events_v1';
+import type { Record, RecordMeta, RecordRef } from '../models/core_v1';
+import type { ListenRequest, ListenResponse } from '../models/events_v1';
 import type {
   GetVerificationInfoRequest,
   GetVerificationInfoResponse,
@@ -40,11 +29,7 @@ import type {
   SearchRecordsRequest,
   SearchRecordsResponse,
 } from '../models/search_v1';
-import type {
-  SignRequest,
-  VerifyRequest,
-  VerifyResponse,
-} from '../models/sign_v1';
+import type { SignRequest, VerifyRequest, VerifyResponse } from '../models/sign_v1';
 import type {
   CreateSyncRequest,
   CreateSyncResponse,
@@ -191,9 +176,7 @@ export class Client {
     return this.storeService.push(records);
   }
 
-  async push_referrer(
-    requests: PushReferrerRequest[],
-  ): Promise<PushReferrerResponse[]> {
+  async push_referrer(requests: PushReferrerRequest[]): Promise<PushReferrerResponse[]> {
     return this.storeService.push_referrer(requests);
   }
 
@@ -201,21 +184,15 @@ export class Client {
     return this.storeService.pull(refs);
   }
 
-  async pull_referrer(
-    requests: PullReferrerRequest[],
-  ): Promise<PullReferrerResponse[]> {
+  async pull_referrer(requests: PullReferrerRequest[]): Promise<PullReferrerResponse[]> {
     return this.storeService.pull_referrer(requests);
   }
 
-  async searchCIDs(
-    request: SearchCIDsRequest,
-  ): Promise<SearchCIDsResponse[]> {
+  async searchCIDs(request: SearchCIDsRequest): Promise<SearchCIDsResponse[]> {
     return this.searchService.searchCIDs(request);
   }
 
-  async searchRecords(
-    request: SearchRecordsRequest,
-  ): Promise<SearchRecordsResponse[]> {
+  async searchRecords(request: SearchRecordsRequest): Promise<SearchRecordsResponse[]> {
     return this.searchService.searchRecords(request);
   }
 
@@ -247,9 +224,7 @@ export class Client {
     return this.signService.verify(request);
   }
 
-  async create_sync(
-    request: CreateSyncRequest,
-  ): Promise<CreateSyncResponse> {
+  async create_sync(request: CreateSyncRequest): Promise<CreateSyncResponse> {
     return this.syncService.create_sync(request);
   }
 
@@ -261,9 +236,7 @@ export class Client {
     return this.syncService.get_sync(request);
   }
 
-  async delete_sync(
-    request: DeleteSyncRequest,
-  ): Promise<DeleteSyncResponse> {
+  async delete_sync(request: DeleteSyncRequest): Promise<DeleteSyncResponse> {
     return this.syncService.delete_sync(request);
   }
 
@@ -271,21 +244,15 @@ export class Client {
     return this.eventService.listen(request);
   }
 
-  async create_publication(
-    request: PublishRequest,
-  ): Promise<CreatePublicationResponse> {
+  async create_publication(request: PublishRequest): Promise<CreatePublicationResponse> {
     return this.publicationService.create_publication(request);
   }
 
-  async list_publication(
-    request: ListPublicationsRequest,
-  ): Promise<ListPublicationsItem[]> {
+  async list_publication(request: ListPublicationsRequest): Promise<ListPublicationsItem[]> {
     return this.publicationService.list_publication(request);
   }
 
-  async get_publication(
-    request: GetPublicationRequest,
-  ): Promise<GetPublicationResponse> {
+  async get_publication(request: GetPublicationRequest): Promise<GetPublicationResponse> {
     return this.publicationService.get_publication(request);
   }
 

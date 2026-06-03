@@ -21,10 +21,7 @@ import { Client, Config, models } from '../src';
  * @param testFunctionName - Name of the test function for record naming
  * @returns Array of generated Record objects
  */
-function genRecords(
-  count: number,
-  testFunctionName: string,
-): models.core_v1.Record[] {
+function genRecords(count: number, testFunctionName: string): models.core_v1.Record[] {
   const records: models.core_v1.Record[] = [];
   for (let index = 0; index < count; index++) {
     records.push(
@@ -186,7 +183,7 @@ describe('Client', () => {
     );
 
     // Sleep to allow the publication to be indexed
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Query for records in the domain
     const objects = await client.list(
@@ -250,9 +247,7 @@ describe('Client', () => {
     const recordRefs = await client.push(records);
 
     const requests: models.store_v1.PushReferrerRequest[] = recordRefs.map(
-      (
-        recordRef: models.core_v1.RecordRef,
-      ): models.store_v1.PushReferrerRequest => {
+      (recordRef: models.core_v1.RecordRef): models.store_v1.PushReferrerRequest => {
         return create(models.store_v1.PushReferrerRequestSchema, {
           recordRef: recordRef,
           type: models.sign_v1.SignatureSchema.typeName,
@@ -281,9 +276,7 @@ describe('Client', () => {
 
     // Push signatures to these records first
     const pushRequests: models.store_v1.PushReferrerRequest[] = recordRefs.map(
-      (
-        recordRef: models.core_v1.RecordRef,
-      ): models.store_v1.PushReferrerRequest => {
+      (recordRef: models.core_v1.RecordRef): models.store_v1.PushReferrerRequest => {
         return create(models.store_v1.PushReferrerRequestSchema, {
           recordRef: recordRef,
           type: models.sign_v1.SignatureSchema.typeName,
@@ -307,9 +300,7 @@ describe('Client', () => {
 
     // Now pull the signatures back
     const requests: models.store_v1.PullReferrerRequest[] = recordRefs.map(
-      (
-        recordRef: models.core_v1.RecordRef,
-      ): models.store_v1.PullReferrerRequest => {
+      (recordRef: models.core_v1.RecordRef): models.store_v1.PullReferrerRequest => {
         return create(models.store_v1.PullReferrerRequestSchema, {
           recordRef: recordRef,
           referrerType: models.sign_v1.SignatureSchema.typeName,
@@ -341,15 +332,15 @@ describe('Client', () => {
     try {
       // Generate key pair
       const cosignPath = env.COSIGN_PATH ?? 'cosign';
-      execFileSync(cosignPath, ["generate-key-pair"], {
+      execFileSync(cosignPath, ['generate-key-pair'], {
         env: { ...shellEnv, COSIGN_PASSWORD: keyPassword },
         encoding: 'utf8',
         stdio: 'pipe',
       });
 
       if (config.dockerConfig) {
-        const cosignKeyPath = realpathSync("cosign.key");
-        const cosignPubPath = realpathSync("cosign.pub");
+        const cosignKeyPath = realpathSync('cosign.key');
+        const cosignPubPath = realpathSync('cosign.pub');
         config.dockerConfig.mounts.push(`type=bind,src=${cosignKeyPath},dst=/cosign.key`);
         config.dockerConfig.mounts.push(`type=bind,src=${cosignPubPath},dst=/cosign.pub`);
       }
@@ -410,8 +401,7 @@ describe('Client', () => {
             provider: {
               request: {
                 case: 'any',
-                value: {
-                },
+                value: {},
               },
             },
           }),
@@ -508,13 +498,10 @@ describe('Client', () => {
     // Create sync
     const createResponse = await client.create_sync(
       create(models.store_v1.CreateSyncRequestSchema, {
-        remoteDirectoryUrl:
-          env.DIRECTORY_SERVER_PEER1_ADDRESS ?? '0.0.0.0:8891',
+        remoteDirectoryUrl: env.DIRECTORY_SERVER_PEER1_ADDRESS ?? '0.0.0.0:8891',
       }),
     );
-    expect(createResponse).toBeTypeOf(
-      typeof models.store_v1.CreateSyncResponseSchema,
-    );
+    expect(createResponse).toBeTypeOf(typeof models.store_v1.CreateSyncResponseSchema);
 
     const syncId = createResponse.syncId;
     expect(isValidUUID(syncId)).toBe(true);
@@ -536,9 +523,7 @@ describe('Client', () => {
         syncId: syncId,
       }),
     );
-    expect(getResponse).toBeTypeOf(
-      typeof models.store_v1.GetSyncResponseSchema,
-    );
+    expect(getResponse).toBeTypeOf(typeof models.store_v1.GetSyncResponseSchema);
     expect(getResponse.syncId).toEqual(syncId);
 
     // Delete sync
@@ -554,23 +539,21 @@ describe('Client', () => {
     const recordRefs = await client.push(records);
 
     const pool = workerpool(__dirname + '/listen_worker.ts');
-    const args = ["pull", recordRefs[0].cid];
+    const args = ['pull', recordRefs[0].cid];
 
     if (config.spiffeEndpointSocket !== '') {
-      args.push(...["--spiffe-socket-path", config.spiffeEndpointSocket]);
+      args.push(...['--spiffe-socket-path', config.spiffeEndpointSocket]);
     }
 
-    const [command, commandArgs] = config.getCommandAndArgs(args)
+    const [command, commandArgs] = config.getCommandAndArgs(args);
 
     try {
       pool.exec('pullRecordsBackground', [command, commandArgs]);
     } catch (error) {
-      expect.fail(`pullRecordsBackground execution failed: ${error}`)
+      expect.fail(`pullRecordsBackground execution failed: ${error}`);
     }
 
-    const events = client.listen(
-      create(models.events_v1.ListenRequestSchema, {})
-    );
+    const events = client.listen(create(models.events_v1.ListenRequestSchema, {}));
 
     for await (const response of events) {
       expect(response).toBeTypeOf(typeof models.events_v1.ListenResponseSchema);
@@ -578,7 +561,6 @@ describe('Client', () => {
     }
 
     pool.terminate(true);
-
   }, 20000);
 
   test('publication', async () => {
@@ -596,9 +578,7 @@ describe('Client', () => {
       }),
     );
 
-    expect(createResponse).toBeTypeOf(
-      typeof models.routing_v1.CreatePublicationResponseSchema,
-    );
+    expect(createResponse).toBeTypeOf(typeof models.routing_v1.CreatePublicationResponseSchema);
 
     const publicationsList = await client.list_publication(
       create(models.routing_v1.ListPublicationsRequestSchema, {}),
@@ -616,9 +596,7 @@ describe('Client', () => {
       }),
     );
 
-    expect(getResponse).toBeTypeOf(
-      typeof models.routing_v1.GetPublicationResponseSchema,
-    );
+    expect(getResponse).toBeTypeOf(typeof models.routing_v1.GetPublicationResponseSchema);
 
     expect(getResponse.publicationId).toEqual(createResponse.publicationId);
   });

@@ -179,9 +179,7 @@ export async function createGrpcTransport(
     case 'oidc': {
       const holder = options?.oidcTokenHolder;
       if (holder === undefined) {
-        throw new Error(
-          'createGrpcTransport: authMode oidc requires options.oidcTokenHolder',
-        );
+        throw new Error('createGrpcTransport: authMode oidc requires options.oidcTokenHolder');
       }
       return createOidcTransport(config, holder);
     }

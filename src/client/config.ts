@@ -177,16 +177,8 @@ export class Config {
   ) {
     const resolvedAuthToken = [authToken, oidcAccessToken].find(Boolean) ?? '';
 
-    if (
-      !serverAddress.startsWith('http://') &&
-      !serverAddress.startsWith('https://')
-    ) {
-      if (
-        authMode === 'x509' ||
-        authMode === 'jwt' ||
-        authMode === 'tls' ||
-        authMode === 'oidc'
-      ) {
+    if (!serverAddress.startsWith('http://') && !serverAddress.startsWith('https://')) {
+      if (authMode === 'x509' || authMode === 'jwt' || authMode === 'tls' || authMode === 'oidc') {
         serverAddress = `https://${serverAddress}`;
       } else {
         serverAddress = `http://${serverAddress}`;
@@ -211,16 +203,14 @@ export class Config {
     this.oidcRedirectUri = oidcRedirectUri;
     this.oidcCallbackPort = oidcCallbackPort;
     this.oidcAuthTimeout = oidcAuthTimeout;
-    this.oidcScopes =
-      oidcScopes !== undefined ? [...oidcScopes] : [...Config.DEFAULT_OIDC_SCOPES];
+    this.oidcScopes = oidcScopes !== undefined ? [...oidcScopes] : [...Config.DEFAULT_OIDC_SCOPES];
     this.dockerConfig = dockerConfig;
   }
 
   static loadFromEnv(prefix = 'DIRECTORY_CLIENT_') {
     const dirctlPath = env.DIRCTL_PATH ?? Config.DEFAULT_DIRCTL_PATH;
 
-    const serverAddress =
-      env[`${prefix}SERVER_ADDRESS`] ?? Config.DEFAULT_SERVER_ADDRESS;
+    const serverAddress = env[`${prefix}SERVER_ADDRESS`] ?? Config.DEFAULT_SERVER_ADDRESS;
     const spiffeEndpointSocketPath =
       env[`${prefix}SPIFFE_SOCKET_PATH`] ?? Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET;
     const authMode = (env[`${prefix}AUTH_MODE`] ?? Config.DEFAULT_AUTH_MODE) as AuthMode;
@@ -229,19 +219,16 @@ export class Config {
     const tlsCaFile = env[`${prefix}TLS_CA_FILE`] ?? Config.DEFAULT_TLS_CA_FILE;
     const tlsCertFile = env[`${prefix}TLS_CERT_FILE`] ?? Config.DEFAULT_TLS_CERT_FILE;
     const tlsKeyFile = env[`${prefix}TLS_KEY_FILE`] ?? Config.DEFAULT_TLS_KEY_FILE;
-    const tlsServerName =
-      env[`${prefix}TLS_SERVER_NAME`] ?? Config.DEFAULT_TLS_SERVER_NAME;
+    const tlsServerName = env[`${prefix}TLS_SERVER_NAME`] ?? Config.DEFAULT_TLS_SERVER_NAME;
     const tlsSkipVerify = parseBoolEnv(
       env[`${prefix}TLS_SKIP_VERIFY`],
       Config.DEFAULT_TLS_SKIP_VERIFY,
     );
     const oidcIssuer = env[`${prefix}OIDC_ISSUER`] ?? Config.DEFAULT_OIDC_ISSUER;
-    const oidcClientId =
-      env[`${prefix}OIDC_CLIENT_ID`] ?? Config.DEFAULT_OIDC_CLIENT_ID;
+    const oidcClientId = env[`${prefix}OIDC_CLIENT_ID`] ?? Config.DEFAULT_OIDC_CLIENT_ID;
     const oidcClientSecret =
       env[`${prefix}OIDC_CLIENT_SECRET`] ?? Config.DEFAULT_OIDC_CLIENT_SECRET;
-    const oidcRedirectUri =
-      env[`${prefix}OIDC_REDIRECT_URI`] ?? Config.DEFAULT_OIDC_REDIRECT_URI;
+    const oidcRedirectUri = env[`${prefix}OIDC_REDIRECT_URI`] ?? Config.DEFAULT_OIDC_REDIRECT_URI;
     const oidcCallbackPort = parseIntEnv(
       env[`${prefix}OIDC_CALLBACK_PORT`],
       Config.DEFAULT_OIDC_CALLBACK_PORT,
@@ -250,10 +237,7 @@ export class Config {
       env[`${prefix}OIDC_AUTH_TIMEOUT`],
       Config.DEFAULT_OIDC_AUTH_TIMEOUT,
     );
-    const oidcScopes = parseCommaScopes(
-      env[`${prefix}OIDC_SCOPES`],
-      Config.DEFAULT_OIDC_SCOPES,
-    );
+    const oidcScopes = parseCommaScopes(env[`${prefix}OIDC_SCOPES`], Config.DEFAULT_OIDC_SCOPES);
 
     let dockerConfig: DockerConfig | undefined = undefined;
     const dirctlImage = env.DIRCTL_IMAGE;

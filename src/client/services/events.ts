@@ -12,9 +12,7 @@ export class EventService {
     this.eventClient = eventClient;
   }
 
-  listen(
-    request: models.events_v1.ListenRequest,
-  ): AsyncIterable<models.events_v1.ListenResponse> {
+  listen(request: models.events_v1.ListenRequest): AsyncIterable<models.events_v1.ListenResponse> {
     return this.eventClient.listen(request);
   }
 }

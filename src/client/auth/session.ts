@@ -2,11 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Config } from '../config.js';
-import {
-  fetchOpenidConfiguration,
-  OAuthTokenHolder,
-  runLoopbackPkceLogin,
-} from './oauthPkce.js';
+import { fetchOpenidConfiguration, OAuthTokenHolder, runLoopbackPkceLogin } from './oauthPkce.js';
 import { CachedToken, TokenCache } from './tokenCache.js';
 
 export function cachedTokenFromResponse(

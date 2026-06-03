@@ -17,9 +17,7 @@ export class RoutingService {
     await this.routingClient.publish(request);
   }
 
-  async list(
-    request: models.routing_v1.ListRequest,
-  ): Promise<models.routing_v1.ListResponse[]> {
+  async list(request: models.routing_v1.ListRequest): Promise<models.routing_v1.ListResponse[]> {
     return collectStream(this.routingClient.list(request));
   }
 

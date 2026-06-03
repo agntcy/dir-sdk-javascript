@@ -56,12 +56,7 @@ async function httpRequest(
     const u = new URL(urlStr);
     const isHttps = u.protocol === 'https:';
     const lib = isHttps ? https : http;
-    const port =
-      u.port !== ''
-        ? Number(u.port)
-        : isHttps
-          ? 443
-          : 80;
+    const port = u.port !== '' ? Number(u.port) : isHttps ? 443 : 80;
     const req = lib.request(
       {
         hostname: u.hostname,
@@ -102,16 +97,24 @@ export async function fetchOpenidConfiguration(
   const url = `${base}/.well-known/openid-configuration`;
   let response: { status: number; text: string };
   try {
-    response = await httpRequest('GET', url, undefined, {}, {
-      timeoutMs: options.timeoutMs,
-      rejectUnauthorized: options.verify,
-    });
+    response = await httpRequest(
+      'GET',
+      url,
+      undefined,
+      {},
+      {
+        timeoutMs: options.timeoutMs,
+        rejectUnauthorized: options.verify,
+      },
+    );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     throw new OAuthPkceError(`OpenID discovery failed: ${msg}`);
   }
   if (response.status < 200 || response.status >= 300) {
-    throw new OAuthPkceError(`OpenID discovery HTTP ${response.status}: ${response.text.slice(0, 500)}`);
+    throw new OAuthPkceError(
+      `OpenID discovery HTTP ${response.status}: ${response.text.slice(0, 500)}`,
+    );
   }
   let data: Record<string, unknown>;
   try {
@@ -158,7 +161,10 @@ export async function exchangeAuthorizationCode(
     'POST',
     tokenEndpoint,
     encoded,
-    { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': String(Buffer.byteLength(encoded)) },
+    {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': String(Buffer.byteLength(encoded)),
+    },
     { timeoutMs: params.timeoutMs, rejectUnauthorized: params.verify },
   );
   let json: Record<string, unknown>;
@@ -174,11 +180,7 @@ export async function exchangeAuthorizationCode(
 }
 
 function base64Url(buf: Buffer): string {
-  return buf
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function createS256CodeChallenge(verifier: string): string {
@@ -191,7 +193,11 @@ function openBrowser(url: string): void {
   if (os === 'darwin') {
     spawn('open', [url], { stdio: 'ignore', detached: true }).unref();
   } else if (os === 'win32') {
-    spawn('cmd', ['/c', 'start', '""', url], { stdio: 'ignore', detached: true, shell: false }).unref();
+    spawn('cmd', ['/c', 'start', '""', url], {
+      stdio: 'ignore',
+      detached: true,
+      shell: false,
+    }).unref();
   } else {
     spawn('xdg-open', [url], { stdio: 'ignore', detached: true }).unref();
   }
@@ -365,9 +371,7 @@ export async function runLoopbackPkceLogin(
   });
 
   const scopeStr =
-    config.oidcScopes && config.oidcScopes.length > 0
-      ? config.oidcScopes.join(' ')
-      : 'openid';
+    config.oidcScopes && config.oidcScopes.length > 0 ? config.oidcScopes.join(' ') : 'openid';
   const authParams = new URLSearchParams({
     response_type: 'code',
     client_id: config.oidcClientId,

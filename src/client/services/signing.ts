@@ -12,10 +12,7 @@ export class SignService {
   private readonly config: Config;
   private readonly signClient: Client<typeof models.sign_v1.SignService>;
 
-  constructor(
-    config: Config,
-    signClient: Client<typeof models.sign_v1.SignService>,
-  ) {
+  constructor(config: Config, signClient: Client<typeof models.sign_v1.SignService>) {
     this.config = config;
     this.signClient = signClient;
   }
@@ -24,9 +21,7 @@ export class SignService {
     signRecord(this.config, req);
   }
 
-  async verify(
-    request: models.sign_v1.VerifyRequest,
-  ): Promise<models.sign_v1.VerifyResponse> {
+  async verify(request: models.sign_v1.VerifyRequest): Promise<models.sign_v1.VerifyResponse> {
     if (request.fromServer) {
       if (!request.recordRef?.cid) {
         throw new Error('VerifyRequest.recordRef with cid is required');

@@ -11,15 +11,8 @@ export {
   type AuthMode,
 } from './client/index.js';
 export * as models from './models';
-export type {
-  Record,
-  RecordMeta,
-  RecordRef,
-} from './models/core_v1';
-export type {
-  ListenRequest,
-  ListenResponse,
-} from './models/events_v1';
+export type { Record, RecordMeta, RecordRef } from './models/core_v1';
+export type { ListenRequest, ListenResponse } from './models/events_v1';
 export type {
   GetVerificationInfoRequest,
   GetVerificationInfoResponse,
@@ -43,11 +36,7 @@ export type {
   SearchRecordsRequest,
   SearchRecordsResponse,
 } from './models/search_v1';
-export type {
-  SignRequest,
-  VerifyRequest,
-  VerifyResponse,
-} from './models/sign_v1';
+export type { SignRequest, VerifyRequest, VerifyResponse } from './models/sign_v1';
 export type {
   CreateSyncRequest,
   CreateSyncResponse,
