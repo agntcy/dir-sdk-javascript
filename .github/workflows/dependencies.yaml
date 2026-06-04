@@ -36,6 +36,8 @@ jobs:
       - name: Run Renovate
         run: task deps:renovate:sync
         env:
+          # Cron runs every 6h; allow updates outside renovate.json's Monday schedule window
+          RENOVATE_UPDATE_NOT_SCHEDULED: "true"
           ## Discovery
           RENOVATE_AUTODISCOVER: "true"
           RENOVATE_AUTODISCOVER_FILTER: "${{ github.repository }}"

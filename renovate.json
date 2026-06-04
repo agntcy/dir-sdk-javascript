@@ -32,7 +32,7 @@
   ],
   "enabled": true,
   "minimumReleaseAge": "7 days",
-  "prCreation": "not-pending",
+  "internalChecksFilter": "strict",
   "schedule": ["before 6am on Monday"],
   "enabledManagers": [
     "custom.regex",
@@ -48,6 +48,24 @@
     "enabled": true
   },
   "packageRules": [
+    {
+      "description": [
+        "Buf Schema Registry npm SDK uses prerelease tags; do not apply the global release-age gate."
+      ],
+      "matchDatasources": ["npm"],
+      "matchPackageNames": ["@buf/agntcy_dir.bufbuild_es"],
+      "registryUrls": ["https://buf.build/gen/npm/v1"],
+      "minimumReleaseAge": null
+    },
+    {
+      "description": [
+        "engines.node is a range constraint (>=20), not a pin; node-version lookup breaks timestamp calculation."
+      ],
+      "matchDatasources": ["node-version"],
+      "matchDepTypes": ["engines"],
+      "matchDepNames": ["node"],
+      "enabled": false
+    },
     {
       "matchUpdateTypes": ["major"],
       "enabled": false,

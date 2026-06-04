@@ -19,6 +19,7 @@ dist/
 
 # Scratch
 tmp/
+.renovate-sync.log
 
 # AI
 .cursor/

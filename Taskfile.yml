@@ -372,23 +372,49 @@ tasks:
     status:
       - npm list -g renovate | grep {{ .RENOVATE_VERSION }} -q
 
-  deps:renovate:sync:
-    desc: Sync dependencies with Renovate
+  deps:renovate:discover:
+    desc: Discover outdated dependencies (local, no PRs or file writes)
     summary: |
-      For extra CLI flags pass RENOVATE_OPTS (e.g. task deps:renovate:sync RENOVATE_OPTS='--dry-run').
-      Default platform is local so local runs do not touch remote project data.
-      Github Action CI sets RENOVATE_PLATFORM to github.
-      This step is only analytical without GITHUB TOKEN and will not update PRs or project data.
+      Runs Renovate with platform=local (lookup-only). package.json is not modified.
+      Equivalent to LOG_LEVEL=debug renovate --platform local --persist-repo-data true --update-not-scheduled.
+      Post-upgrade tasks do not run in lookup mode; use deps:renovate:sync for PRs + sdk:tidy.
+      For extra CLI flags pass RENOVATE_OPTS.
+    deps:
+      - deps:renovate
+    dir: "{{ .ROOT_DIR }}"
+    vars:
+      RENOVATE_OPTS: "{{ .RENOVATE_OPTS | default .RENOVATE_OPTS_DISCOVER }}"
+      RENOVATE_OPTS_DISCOVER: >-
+        --persist-repo-data 'true'
+        --update-not-scheduled
+    cmds:
+      - renovate {{ .RENOVATE_OPTS }} --platform local
+
+  deps:renovate:sync:
+    desc: Sync dependencies with Renovate on GitHub (opens/updates PRs)
+    summary: |
+      Requires RENOVATE_TOKEN (CI provides this). Post-upgrade runs task sdk:tidy.
+      For lookup-only local runs use task deps:renovate:discover instead.
+      For extra CLI flags pass RENOVATE_OPTS (e.g. RENOVATE_OPTS='--dry-run=lookup').
     deps:
       - deps:renovate
     dir: "{{ .ROOT_DIR }}"
     vars:
       RENOVATE_OPTS_DEFAULT: >-
         --persist-repo-data 'true'
+        --update-not-scheduled
         --allowed-post-upgrade-commands '[".*"]'
         --post-upgrade-tasks '{"commands": ["task sdk:tidy"], "executionMode": "branch"}'
       RENOVATE_OPTS: "{{ .RENOVATE_OPTS | default .RENOVATE_OPTS_DEFAULT }}"
-      RENOVATE_PLATFORM_EFFECTIVE:
-        sh: printf '%s' "${RENOVATE_PLATFORM:-local}"
+    env:
+      RENOVATE_AUTODISCOVER: "true"
+      RENOVATE_AUTODISCOVER_FILTER: "agntcy/dir-sdk-javascript"
+      RENOVATE_PLATFORM: github
+      RENOVATE_PLATFORM_COMMIT: enabled
+      RENOVATE_UPDATE_NOT_SCHEDULED: "true"
+      GITHUB_COM_TOKEN:
+        sh: printf '%s' "${RENOVATE_TOKEN}"
+    preconditions:
+      - sh: test -n "${RENOVATE_TOKEN}"
     cmds:
-      - renovate {{ .RENOVATE_OPTS }} --platform "{{ .RENOVATE_PLATFORM_EFFECTIVE }}"
+      - renovate {{ .RENOVATE_OPTS }} --platform github
