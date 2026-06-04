@@ -381,7 +381,7 @@ tasks:
     internal: true
     cmd: npm install -g renovate@{{ .RENOVATE_VERSION }}
     status:
-      - npm list -g renovate
+      - npm list -g renovate | grep {{ .RENOVATE_VERSION }} -q
 
   deps:renovate:sync:
     desc: Sync dependencies with Renovate
