@@ -7,9 +7,11 @@ import * as models from '../../models/index.js';
 import { collectStream } from './base.js';
 
 export class SearchService {
-  constructor(
-    private readonly searchClient: Client<typeof models.search_v1.SearchService>,
-  ) {}
+  private readonly searchClient: Client<typeof models.search_v1.SearchService>;
+
+  constructor(searchClient: Client<typeof models.search_v1.SearchService>) {
+    this.searchClient = searchClient;
+  }
 
   async searchCIDs(
     request: models.search_v1.SearchCIDsRequest,

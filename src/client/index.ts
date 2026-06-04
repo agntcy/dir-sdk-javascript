@@ -2,5 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export { Client } from './client.js';
-export { Config, type AuthMode } from './config.js';
-export { OAuthPkceError } from './auth/oauthPkce.js';
+export { Config, DockerConfig, type AuthMode } from './config.js';
+export { OAuthPkceError, OAuthTokenHolder } from './auth/oauthPkce.js';
+export { OAuthSessionManager } from './auth/session.js';

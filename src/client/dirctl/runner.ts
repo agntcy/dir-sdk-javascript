@@ -59,9 +59,6 @@ export function runDirctl(
   });
 }
 
-export function getDirctlCommandAndArgs(
-  config: Config,
-  args: string[],
-): [string, string[]] {
+export function getDirctlCommandAndArgs(config: Config, args: string[]): [string, string[]] {
   return config.getCommandAndArgs(args);
 }

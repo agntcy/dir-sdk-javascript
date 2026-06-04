@@ -12,13 +12,10 @@ import { fromJsonString } from '@bufbuild/protobuf';
 import type { Config } from '../config.js';
 import * as models from '../../models/index.js';
 
-function runVerifyCommand(
-  config: Config,
-  args: string[],
-): void {
+function runVerifyCommand(config: Config, args: string[]): void {
   const [command, commandArgs] = config.getCommandAndArgs(args);
   const output = spawnSync(command, commandArgs, {
-    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': config.serverAddress },
+    env: { ...env, DIRECTORY_CLIENT_SERVER_ADDRESS: config.serverAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
@@ -120,7 +117,7 @@ export function verifyRecord(
   }
 
   try {
-    const cid = request.recordRef?.cid || '';
+    const cid = request.recordRef?.cid ?? '';
 
     switch (request.provider?.request.case) {
       case 'oidc':

@@ -27,15 +27,15 @@ describe('OIDC auth config', () => {
   });
 
   test('loadFromEnv uses AUTH_TOKEN', () => {
-    env['DIRECTORY_CLIENT_AUTH_TOKEN'] = 'primary-token';
+    env.DIRECTORY_CLIENT_AUTH_TOKEN = 'primary-token';
     const config = Config.loadFromEnv();
     expect(config.authToken).toBe('primary-token');
     expect(config.oidcAccessToken).toBe('primary-token');
   });
 
   test('loadFromEnv ignores legacy OIDC/OAUTH access token env names', () => {
-    env['DIRECTORY_CLIENT_OIDC_ACCESS_TOKEN'] = 'legacy-token';
-    env['DIRECTORY_CLIENT_OAUTH_ACCESS_TOKEN'] = 'older-legacy-token';
+    env.DIRECTORY_CLIENT_OIDC_ACCESS_TOKEN = 'legacy-token';
+    env.DIRECTORY_CLIENT_OAUTH_ACCESS_TOKEN = 'older-legacy-token';
     const config = Config.loadFromEnv();
     expect(config.authToken).toBe('');
     expect(config.oidcAccessToken).toBe('');
@@ -49,7 +49,7 @@ describe('OIDC auth config', () => {
 
   test('token cache uses XDG_CONFIG_HOME dirctl path', () => {
     const tmp = mkdtempSync(join(tmpdir(), 'dir-sdk-oidc-'));
-    env['XDG_CONFIG_HOME'] = tmp;
+    env.XDG_CONFIG_HOME = tmp;
     const cache = new TokenCache();
     expect(cache.getCachePath()).toBe(join(tmp, 'dirctl', TOKEN_CACHE_FILE));
   });
@@ -108,7 +108,7 @@ describe('OIDC auth client', () => {
     vi.spyOn(oauthPkce, 'fetchOpenidConfiguration');
     vi.spyOn(oauthPkce, 'runLoopbackPkceLogin');
     const tmp = mkdtempSync(join(tmpdir(), 'dir-sdk-oidc-cache-'));
-    env['XDG_CONFIG_HOME'] = tmp;
+    env.XDG_CONFIG_HOME = tmp;
     const cacheDir = join(tmp, 'dirctl');
     mkdirSync(cacheDir, { recursive: true });
     const expiresAt = new Date(Date.now() + 3_600_000).toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -143,7 +143,7 @@ describe('OIDC auth client', () => {
 
   test('authenticateOAuthPkce updates access token', async () => {
     const tmp = mkdtempSync(join(tmpdir(), 'dir-sdk-oidc-auth-'));
-    env['XDG_CONFIG_HOME'] = tmp;
+    env.XDG_CONFIG_HOME = tmp;
 
     vi.spyOn(oauthPkce, 'fetchOpenidConfiguration').mockResolvedValue({
       authorization_endpoint: 'https://issuer.example.com/auth',
@@ -180,7 +180,7 @@ describe('OIDC auth client', () => {
 
   test('authenticateOAuthPkce saves cache entry compatible with tooling', async () => {
     const tmp = mkdtempSync(join(tmpdir(), 'dir-sdk-oidc-save-'));
-    env['XDG_CONFIG_HOME'] = tmp;
+    env.XDG_CONFIG_HOME = tmp;
 
     vi.spyOn(oauthPkce, 'fetchOpenidConfiguration').mockResolvedValue({
       authorization_endpoint: 'https://issuer.example.com/auth',

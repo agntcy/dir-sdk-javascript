@@ -33,9 +33,9 @@ jobs:
 
       - name: Build the Javascript package
         run: |
-          task sdk:deps:javascript
-          task sdk:build:javascript
+          task deps
+          task build
 
       - name: Publish the Javascript SDK
         run: |
-          task sdk:release:javascript
+          task release

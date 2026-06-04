@@ -16,7 +16,4 @@ export {
   DEFAULT_TOKEN_CACHE_DIR,
   type CachedTokenJson,
 } from './tokenCache.js';
-export {
-  OAuthSessionManager,
-  cachedTokenFromResponse,
-} from './session.js';
+export { OAuthSessionManager, cachedTokenFromResponse } from './session.js';

@@ -23,7 +23,7 @@ tasks:
   # SDK tasks (top-level, user-facing)
   # ---------------------------------------------------------------------------
 
-  sdk:deps:cicd:iodc-token-generation:
+  deps:cicd:iodc-token-generation:
     desc: Get Fulcio OIDC token for CICD
     requires:
       vars: [CLIENT_ID]
@@ -39,16 +39,26 @@ tasks:
         echo "CLIENT_ID=${CLIENT_ID}"
         echo "OIDC_TOKEN=${OIDC_TOKEN}"
 
-  sdk:build:javascript:
+  build:
     desc: Build JavaScript client SDK package
     deps:
-      - task: sdk:deps:javascript
+      - task: deps
     cmds:
       - npm run build
     preconditions:
       - which npm
 
-  sdk:deps:javascript:
+  lint:
+    desc: Lint, format-check, and typecheck JavaScript client SDK package
+    deps:
+      - task: deps
+    cmds:
+      - npm run format:check
+      - npm run lint:check
+    preconditions:
+      - which npm
+
+  deps:
     desc: Install deps for JavaScript SDK package
     deps:
       - deps:dir-ctl
@@ -58,7 +68,7 @@ tasks:
     preconditions:
       - which npm
 
-  sdk:deps:javascript:example:
+  deps:example:
     desc: Install deps for JavaScript SDK example package
     internal: true
     dir: ./examples
@@ -67,36 +77,36 @@ tasks:
     preconditions:
       - which npm
 
-  sdk:tidy:
+  deps:tidy:
     desc: Install deps for SDK packages
     cmds:
-      - task: sdk:deps:javascript
-      - task: sdk:deps:javascript:example
+      - task: deps
+      - task: deps:example
 
-  sdk:test-env:create:
+  test-env:create:
     desc: Create Kubernetes cluster test environment
     cmds:
-      - task: test-env:kubernetes:local
+      - task: test-env:deploy
         vars:
           DIRECTORY_SERVER_PUBLICATION_SCHEDULER_INTERVAL: 1s
           DIRECTORY_SERVER_OASF_API_VALIDATION_SCHEMA_URL: "https://schema.oasf.outshift.com"
 
-  sdk:test-env:delete:
+  test-env:delete:
     desc: Delete Kubernetes cluster test environment
     cmds:
-      - task: test-env:kubernetes:local:cleanup
+      - task: test-env:deploy:cleanup
 
-  sdk:test:javascript:
+  test:
     desc: Test javascript client SDK package
     deps:
-      - task: sdk:deps:javascript
+      - task: deps
     env:
       KIND_CLUSTER_NAME: "sdk-js-test"
     preconditions:
       - which npm
     cmds:
-      - task: sdk:test-env:create
-      - defer: { task: sdk:test-env:delete }
+      - task: test-env:create
+      - defer: { task: test-env:delete }
       - |
         export DIRCTL_IMAGE_TAG="{{ .DIRCTL_IMAGE_TAG }}"
         export COSIGN_PATH="$(printf "%s" "${COSIGN_PATH:-{{ .COSIGN_BIN }}}")"
@@ -109,7 +119,7 @@ tasks:
         npm install
         npm run example
 
-  sdk:release:javascript:
+  release:
     desc: Release javascript client SDK package
     cmd: |
       version=$(npm pkg get version)
@@ -124,7 +134,7 @@ tasks:
   # Test environment (kind cluster + helm deploy of dir-server)
   # ---------------------------------------------------------------------------
 
-  test-env:kubernetes:setup-cluster:
+  test-env:setup-cluster:
     desc: Create a kind cluster and load Docker images
     deps:
       - deps:helm
@@ -162,11 +172,11 @@ tasks:
         {{ .KIND_BIN }} export kubeconfig --name {{ .KIND_CLUSTER_NAME }}
         {{ .KUBECTL_BIN }} cluster-info
 
-  test-env:kubernetes:local:
+  test-env:deploy:
     aliases: [deploy:local]
     desc: Deploy a local Directory server in Kubernetes
     deps:
-      - task: test-env:kubernetes:setup-cluster
+      - task: test-env:setup-cluster
         vars:
           KIND_EXTRA_PORT_MAPPING: "{{.API_HOSTPORT}}:{{.API_NODEPORT}},{{.METRICS_HOSTPORT}}:{{.METRICS_NODEPORT}}"
     vars:
@@ -184,11 +194,11 @@ tasks:
       # TODO: make logic idempotent so that running functional tests does not change previous contexts
 
       # Generate credentials and htpasswd file (using defaults)
-      - task: test-env:kubernetes:gen-htpasswd-creds
+      - task: test-env:htpasswd-creds:gen
 
       # Cleanup credentials on exit (using defaults)
       - defer:
-          task: test-env:kubernetes:cleanup-htpasswd-creds
+          task: test-env:htpasswd-creds:cleanup
 
       # Deploy chart
       - |
@@ -226,7 +236,7 @@ tasks:
           --wait-for-jobs \
           --timeout "15m"
 
-  test-env:kubernetes:local:cleanup:
+  test-env:deploy:cleanup:
     desc: Cleanup Kubernetes environment for local deployment
     deps:
       - deps:kind
@@ -235,7 +245,7 @@ tasks:
     cmds:
       - "{{ .KIND_BIN }} delete cluster --name {{ .KIND_CLUSTER_NAME }}"
 
-  test-env:kubernetes:gen-htpasswd-creds:
+  test-env:htpasswd-creds:gen:
     desc: Generate htpasswd credentials and files for DIR deployment
     vars:
       HTPASSWD_USERNAME: '{{ .HTPASSWD_USERNAME | default "apiserver" }}'
@@ -268,7 +278,7 @@ tasks:
         {{ .HTPASSWD_SYNC_USERNAME }}:${HTPASSWD_SYNC}
         EOF
 
-  test-env:kubernetes:cleanup-htpasswd-creds:
+  test-env:htpasswd-creds:cleanup:
     desc: Cleanup htpasswd credentials and files
     vars:
       CREDS_FILE: '{{ .CREDS_FILE | default "/tmp/dir-htpasswd-creds.env" }}'
@@ -374,7 +384,7 @@ tasks:
       RENOVATE_OPTS_DEFAULT: >-
         --persist-repo-data 'true'
         --allowed-post-upgrade-commands '[".*"]'
-        --post-upgrade-tasks '{"commands": ["task sdk:tidy"], "executionMode": "branch"}'
+        --post-upgrade-tasks '{"commands": ["task deps:tidy"], "executionMode": "branch"}'
       RENOVATE_OPTS: "{{ .RENOVATE_OPTS | default .RENOVATE_OPTS_DEFAULT }}"
       RENOVATE_PLATFORM_EFFECTIVE:
         sh: printf '%s' "${RENOVATE_PLATFORM:-local}"

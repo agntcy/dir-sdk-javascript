@@ -19,7 +19,7 @@ function convertToPEM(bytes: Uint8Array, label: string): string {
     binary += String.fromCharCode(bytes[i]);
   }
   const base64String = btoa(binary);
-  const lines = base64String.match(/.{1,64}/g) || [];
+  const lines = base64String.match(/.{1,64}/g) ?? [];
   return [`-----BEGIN ${label}-----`, ...lines, `-----END ${label}-----`].join('\n');
 }
 
@@ -179,9 +179,7 @@ export async function createGrpcTransport(
     case 'oidc': {
       const holder = options?.oidcTokenHolder;
       if (holder === undefined) {
-        throw new Error(
-          'createGrpcTransport: authMode oidc requires options.oidcTokenHolder',
-        );
+        throw new Error('createGrpcTransport: authMode oidc requires options.oidcTokenHolder');
       }
       return createOidcTransport(config, holder);
     }

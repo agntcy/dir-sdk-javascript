@@ -132,6 +132,7 @@ export class CachedToken {
   }
 }
 
+/** @internal */
 export class TokenCache {
   readonly cacheDir: string;
 
@@ -139,8 +140,7 @@ export class TokenCache {
     if (cacheDir !== undefined) {
       this.cacheDir = cacheDir;
     } else {
-      const configHome = env['XDG_CONFIG_HOME'];
-      const baseDir = configHome ? configHome : join(homedir(), '.config');
+      const baseDir = env.XDG_CONFIG_HOME ?? join(homedir(), '.config');
       this.cacheDir = join(baseDir, DEFAULT_TOKEN_CACHE_DIR);
     }
   }
@@ -166,9 +166,7 @@ export class TokenCache {
     } catch {
       // ignore chmod failures (e.g. Windows)
     }
-    if (token.createdAt === undefined) {
-      token.createdAt = utcNow();
-    }
+    token.createdAt ??= utcNow();
     const serialized = `${JSON.stringify(token.toJson(), null, 2)}\n`;
     const path = this.getCachePath();
     writeFileSync(path, serialized, { encoding: 'utf-8', mode: CACHE_FILE_PERMS });
@@ -187,7 +185,7 @@ export class TokenCache {
   }
 
   isValid(token: CachedToken | undefined): boolean {
-    if (token === undefined || !token.accessToken) {
+    if (!token?.accessToken) {
       return false;
     }
     const now = utcNow().getTime();

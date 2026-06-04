@@ -7,7 +7,11 @@ import * as models from '../../models/index.js';
 import { collectStream, requestGenerator } from './base.js';
 
 export class StoreService {
-  constructor(private readonly storeClient: Client<typeof models.store_v1.StoreService>) {}
+  private readonly storeClient: Client<typeof models.store_v1.StoreService>;
+
+  constructor(storeClient: Client<typeof models.store_v1.StoreService>) {
+    this.storeClient = storeClient;
+  }
 
   async push(records: models.core_v1.Record[]): Promise<models.core_v1.RecordRef[]> {
     return collectStream(this.storeClient.push(requestGenerator(records)));

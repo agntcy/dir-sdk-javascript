@@ -16,9 +16,9 @@ export function signWithKey(
   const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
 
   const shell_env = { ...env };
-  shell_env['COSIGN_PASSWORD'] = req.password ? String(req.password) : '';
+  shell_env.COSIGN_PASSWORD = req.password ? String(req.password) : '';
   if (config.dockerConfig) {
-    config.dockerConfig.envs.set('COSIGN_PASSWORD', shell_env['COSIGN_PASSWORD']);
+    config.dockerConfig.envs.set('COSIGN_PASSWORD', shell_env.COSIGN_PASSWORD);
     config.dockerConfig.envs.set('DIRECTORY_CLIENT_SERVER_ADDRESS', dirctlServerAddress);
   }
 
@@ -26,7 +26,7 @@ export function signWithKey(
   const [command, commandArgs] = config.getCommandAndArgs(args);
 
   return spawnSync(command, commandArgs, {
-    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
+    env: { ...env, DIRECTORY_CLIENT_SERVER_ADDRESS: dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
@@ -41,10 +41,7 @@ export function signWithOidc(
   if (req.idToken !== '') {
     args.push(...['--oidc-token', req.idToken]);
   }
-  if (
-    req.options?.oidcProviderUrl !== undefined &&
-    req.options.oidcProviderUrl !== ''
-  ) {
+  if (req.options?.oidcProviderUrl !== undefined && req.options.oidcProviderUrl !== '') {
     args.push(...['--oidc-provider-url', req.options.oidcProviderUrl]);
   }
   if (req.options?.oidcClientId !== undefined && req.options.oidcClientId !== '') {
@@ -72,14 +69,14 @@ export function signWithOidc(
   const dirctlServerAddress = config.serverAddress.replace(/^https?:\/\//, '');
 
   return spawnSync(command, commandArgs, {
-    env: { ...env, 'DIRECTORY_CLIENT_SERVER_ADDRESS': dirctlServerAddress },
+    env: { ...env, DIRECTORY_CLIENT_SERVER_ADDRESS: dirctlServerAddress },
     encoding: 'utf8',
     stdio: 'pipe',
   });
 }
 
 export function signRecord(config: Config, req: models.sign_v1.SignRequest): void {
-  const cid = req.recordRef?.cid || '';
+  const cid = req.recordRef?.cid ?? '';
   let output: SpawnSyncReturns<string>;
 
   switch (req.provider?.request.case) {
@@ -94,6 +91,6 @@ export function signRecord(config: Config, req: models.sign_v1.SignRequest): voi
   }
 
   if (output.status !== 0) {
-    throw output.error || output.stderr;
+    throw output.error ?? output.stderr;
   }
 }
