@@ -46,6 +46,16 @@
       "description": ["Ignore major dependency updates."]
     },
     {
+      "groupName": "Node",
+      "groupSlug": "node",
+      "matchFileNames": ["package.json"],
+      "addLabels": ["dependencies"],
+      "description": [
+        "Add dependencies label to PRs which are related to Node dependencies.",
+        "Group Node dependency updates in single PR."
+      ]
+    },
+    {
       "groupName": "Taskfile",
       "groupSlug": "taskfile",
       "matchFileNames": ["Taskfile.*"],
