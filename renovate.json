@@ -34,7 +34,11 @@
   "schedule": ["before 6am on Monday"],
   "enabledManagers": ["custom.regex", "github-actions", "npm", "nvm", "nodenv"],
   "labels": ["dependencies"],
-  "ignoreDeps": [],
+  "ignoreDeps": [
+    "@buf/agntcy_dir.bufbuild_es",
+    "@buf/bufbuild_protovalidate.bufbuild_es",
+    "@bufbuild/protobuf"
+  ],
   "osvVulnerabilityAlerts": true,
   "lockFileMaintenance": {
     "enabled": true
