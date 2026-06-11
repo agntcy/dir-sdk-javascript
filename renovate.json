@@ -34,7 +34,11 @@
   "schedule": ["before 6am on Monday"],
   "enabledManagers": ["custom.regex", "github-actions", "npm", "nvm", "nodenv"],
   "labels": ["dependencies"],
-  "ignoreDeps": [],
+  "ignoreDeps": [
+    "@buf/agntcy_dir.bufbuild_es",
+    "@buf/bufbuild_protovalidate.bufbuild_es",
+    "@bufbuild/protobuf"
+  ],
   "osvVulnerabilityAlerts": true,
   "lockFileMaintenance": {
     "enabled": true
@@ -44,6 +48,16 @@
       "matchUpdateTypes": ["major"],
       "enabled": false,
       "description": ["Ignore major dependency updates."]
+    },
+    {
+      "groupName": "Node",
+      "groupSlug": "node",
+      "matchFileNames": ["package.json"],
+      "addLabels": ["dependencies"],
+      "description": [
+        "Add dependencies label to PRs which are related to Node dependencies.",
+        "Group Node dependency updates in single PR."
+      ]
     },
     {
       "groupName": "Taskfile",
