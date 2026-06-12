@@ -136,6 +136,108 @@ describe('Client', () => {
     }
   });
 
+  test('searchAnnotation', async () => {
+    const records = [
+      create(models.core_v1.RecordSchema, {
+        data: {
+          name: `agntcy-annotation-${uuidv4().substring(0, 8)}`,
+          version: 'v3.0.0',
+          schema_version: '0.8.0',
+          description: 'Record with custom annotations.',
+          authors: ['AGNTCY'],
+          created_at: '2025-03-19T17:06:37Z',
+          annotations: { key: 'value' },
+          skills: [
+            {
+              name: 'natural_language_processing/natural_language_generation/text_completion',
+              id: 10201,
+            },
+          ],
+          locators: [],
+          domains: [{ name: 'technology/networking', id: 103 }],
+          modules: [],
+        },
+      }),
+    ];
+    const recordRefs = await client.push(records);
+    expect(recordRefs).toHaveLength(1);
+
+    const objects = await client.searchCIDs(
+      create(models.search_v1.SearchCIDsRequestSchema, {
+        queries: [
+          {
+            type: models.search_v1.RecordQueryType.ANNOTATION,
+            value: 'key:value',
+          },
+        ],
+        limit: 10,
+      }),
+    );
+
+    expect(objects.some((obj) => obj.recordCid === recordRefs[0].cid)).toBe(true);
+  });
+
+  test('searchRouting', async () => {
+    const records = genRecords(1, 'searchRouting');
+    const recordRefs = await client.push(records);
+
+    await client.publish(
+      create(models.routing_v1.PublishRequestSchema, {
+        request: {
+          case: 'recordRefs',
+          value: { refs: recordRefs },
+        },
+      }),
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const objects = await client.searchRouting(
+      create(models.routing_v1.SearchRequestSchema, {
+        queries: [
+          {
+            type: models.routing_v1.RecordQueryType.DOMAIN,
+            value: 'technology/networking',
+          },
+        ],
+        limit: 10,
+      }),
+    );
+
+    expect(objects).toBeInstanceOf(Array);
+    for (const obj of objects) {
+      expect(obj).toBeTypeOf(typeof models.routing_v1.SearchResponseSchema);
+    }
+  }, 30000);
+
+  test('deleteReferrer', async () => {
+    const records = genRecords(1, 'deleteReferrer');
+    const recordRefs = await client.push(records);
+
+    const pushResponse = await client.push_referrer([
+      create(models.store_v1.PushReferrerRequestSchema, {
+        recordRef: recordRefs[0],
+        type: models.sign_v1.SignatureSchema.typeName,
+        data: {
+          signature: 'dGVzdC1zaWduYXR1cmU=',
+          annotations: { payload: 'test-payload-data' },
+        },
+      }),
+    ]);
+
+    expect(pushResponse).toHaveLength(1);
+    expect(pushResponse[0].success).toBe(true);
+
+    const deleteResponse = await client.deleteReferrer(
+      create(models.store_v1.DeleteReferrerRequestSchema, {
+        record: recordRefs[0],
+        referrerRef: pushResponse[0].referrerRef,
+      }),
+    );
+
+    expect(deleteResponse.referrerRefs.length).toBeGreaterThan(0);
+  });
+
   test('lookup', async () => {
     const records = genRecords(2, 'lookup');
     const recordRefs = await client.push(records);
