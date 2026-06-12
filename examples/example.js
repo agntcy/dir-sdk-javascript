@@ -36,6 +36,9 @@ function generateRecords(names) {
                 "id": 103
             }
         ],
+        "annotations": {
+            "env": "prod"
+        },
         "modules": [
             {
                 "name": "integration/a2a",
@@ -101,6 +104,18 @@ function generateRecords(names) {
     limit: 3,
   });
   console.log("Search result:", search_response);
+
+  // Search objects by annotation key:value (v1.4)
+  const annotation_response = await client.searchCIDs({
+    queries: [
+      {
+        type: models.search_v1.RecordQueryType.ANNOTATION,
+        value: "env:prod",
+      },
+    ],
+    limit: 3,
+  });
+  console.log("Annotation search result:", annotation_response);
 
   // Publish objects
   await client.publish({
