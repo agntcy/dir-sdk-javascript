@@ -21,6 +21,8 @@ import type {
   ListRequest,
   ListResponse,
   PublishRequest,
+  SearchRequest,
+  SearchResponse,
   UnpublishRequest,
 } from '../models/routing_v1';
 import type {
@@ -33,6 +35,8 @@ import type { SignRequest, VerifyRequest, VerifyResponse } from '../models/sign_
 import type {
   CreateSyncRequest,
   CreateSyncResponse,
+  DeleteReferrerRequest,
+  DeleteReferrerResponse,
   DeleteSyncRequest,
   DeleteSyncResponse,
   GetSyncRequest,
@@ -204,6 +208,10 @@ export class Client {
     return this.routingService.list(request);
   }
 
+  async searchRouting(request: SearchRequest): Promise<SearchResponse[]> {
+    return this.routingService.searchRouting(request);
+  }
+
   async publish(request: PublishRequest): Promise<void> {
     return this.routingService.publish(request);
   }
@@ -214,6 +222,10 @@ export class Client {
 
   async delete(refs: RecordRef[]): Promise<void> {
     return this.storeService.delete(refs);
+  }
+
+  async deleteReferrer(request: DeleteReferrerRequest): Promise<DeleteReferrerResponse> {
+    return this.storeService.deleteReferrer(request);
   }
 
   sign(req: SignRequest): void {
