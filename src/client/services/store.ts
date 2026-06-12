@@ -40,4 +40,17 @@ export class StoreService {
   async delete(refs: models.core_v1.RecordRef[]): Promise<void> {
     await this.storeClient.delete(requestGenerator(refs));
   }
+
+  async deleteReferrer(
+    request: models.store_v1.DeleteReferrerRequest,
+  ): Promise<models.store_v1.DeleteReferrerResponse> {
+    async function* requests() {
+      yield request;
+    }
+    const responses = await collectStream(this.storeClient.deleteReferrer(requests()));
+    if (responses.length === 0) {
+      throw new Error('deleteReferrer failed: empty response');
+    }
+    return responses[0];
+  }
 }
