@@ -3,6 +3,19 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
+## 1.4.0 (2026-06-12)
+
+### Added
+
+- `searchRouting` for network-wide `RoutingService.Search`.
+- `deleteReferrer` for `StoreService.DeleteReferrer`.
+- Annotation-based search support (`RecordQueryType.ANNOTATION`) in tests and examples.
+
+### Changed
+
+- Updated `@buf/agntcy_dir.bufbuild_es` to track [agntcy/dir][agntcy/dir] `v1.4.0`.
+- Bumped the directory chart and `dirctl` image used in CI to `v1.4.0`.
+
 ## 1.3.0 (2026-05-12)
 
 ### Changed
