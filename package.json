@@ -81,8 +81,5 @@
     "dist/index.cjs",
     "dist/index.mjs.map"
   ],
-  "directories": {
-    "test": "test"
-  },
   "author": ""
 }
