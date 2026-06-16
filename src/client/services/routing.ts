@@ -21,6 +21,12 @@ export class RoutingService {
     return collectStream(this.routingClient.list(request));
   }
 
+  async searchRouting(
+    request: models.routing_v1.SearchRequest,
+  ): Promise<models.routing_v1.SearchResponse[]> {
+    return collectStream(this.routingClient.search(request));
+  }
+
   async unpublish(request: models.routing_v1.UnpublishRequest): Promise<void> {
     await this.routingClient.unpublish(request);
   }

@@ -28,6 +28,8 @@ export type {
   ListRequest,
   ListResponse,
   PublishRequest,
+  SearchRequest,
+  SearchResponse,
   UnpublishRequest,
 } from './models/routing_v1';
 export type {
@@ -40,6 +42,8 @@ export type { SignRequest, VerifyRequest, VerifyResponse } from './models/sign_v
 export type {
   CreateSyncRequest,
   CreateSyncResponse,
+  DeleteReferrerRequest,
+  DeleteReferrerResponse,
   DeleteSyncRequest,
   DeleteSyncResponse,
   GetSyncRequest,

@@ -11,6 +11,10 @@ export {
   PullReferrerRequestSchema,
   PullReferrerResponse,
   PullReferrerResponseSchema,
+  DeleteReferrerRequest,
+  DeleteReferrerRequestSchema,
+  DeleteReferrerResponse,
+  DeleteReferrerResponseSchema,
   StoreService,
 } from '@buf/agntcy_dir.bufbuild_es/agntcy/dir/store/v1/store_service_pb';
 export {

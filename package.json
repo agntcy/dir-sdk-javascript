@@ -1,6 +1,6 @@
 {
   "name": "agntcy-dir",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Directory SDK",
   "homepage": "https://github.com/agntcy/dir-sdk-javascript",
   "bugs": {
@@ -81,8 +81,5 @@
     "dist/index.cjs",
     "dist/index.mjs.map"
   ],
-  "directories": {
-    "test": "test"
-  },
   "author": ""
 }
