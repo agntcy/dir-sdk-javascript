@@ -32,9 +32,9 @@
   "minimumReleaseAge": "7 days",
   "prCreation": "not-pending",
   "schedule": [
-    "before 6am on Monday",
-    "before 6am on Wednesday",
-    "before 6am on Friday"
+    "before 8am on Monday",
+    "before 8am on Wednesday",
+    "before 8am on Friday"
   ],
   "enabledManagers": ["custom.regex", "github-actions", "npm", "nvm", "nodenv"],
   "labels": ["dependencies"],
