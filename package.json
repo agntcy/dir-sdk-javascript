@@ -1,6 +1,6 @@
 {
   "name": "agntcy-dir",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Directory SDK",
   "homepage": "https://github.com/agntcy/dir-sdk-javascript",
   "bugs": {
@@ -43,7 +43,7 @@
   },
   "packageManager": "npm@11.16.0",
   "dependencies": {
-    "@buf/agntcy_dir.bufbuild_es": "2.12.0-20260528135443-85b61b2b84a9.1",
+    "@buf/agntcy_dir.bufbuild_es": "2.12.0-20260617162622-804385aa416f.1",
     "@bufbuild/protobuf": "^2.12.0",
     "@connectrpc/connect": "^2.1.0",
     "@connectrpc/connect-node": "^2.1.0",
@@ -81,5 +81,9 @@
     "dist/index.cjs",
     "dist/index.mjs.map"
   ],
-  "author": ""
+  "author": "",
+  "allowScripts": {
+    "fsevents@2.3.3": true,
+    "protobufjs@7.6.4": true
+  }
 }

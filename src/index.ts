@@ -11,6 +11,16 @@ export {
   type AuthMode,
 } from './client/index.js';
 export * as models from './models';
+export type {
+  ExportAgentRequest,
+  GetAgentRequest,
+  GetAgentResponse,
+  GetWellKnownCatalogRequest,
+  GetWellKnownCatalogResponse,
+  HttpBody,
+  ListAgentsRequest,
+  ListAgentsResponse,
+} from './models/catalog_v1';
 export type { Record, RecordMeta, RecordRef } from './models/core_v1';
 export type { ListenRequest, ListenResponse } from './models/events_v1';
 export type {

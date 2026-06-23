@@ -4,10 +4,13 @@
 import { describe, test, beforeAll, afterAll, expect } from 'vitest';
 
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { pool as workerpool } from 'workerpool';
 import { rmSync, realpathSync } from 'node:fs';
 import { env } from 'node:process';
-import { create } from '@bufbuild/protobuf';
+import { create, fromJson } from '@bufbuild/protobuf';
 
 import { validate as isValidUUID } from 'uuid';
 import { v4 as uuidv4 } from 'uuid';
@@ -62,6 +65,43 @@ function genRecords(count: number, testFunctionName: string): models.core_v1.Rec
   }
 
   return records;
+}
+
+const testDir = dirname(fileURLToPath(import.meta.url));
+
+function loadCatalogFixtureRecord(): models.core_v1.Record {
+  const fixturePath = join(testDir, 'testdata', 'record_100.json');
+  const recordData = JSON.parse(readFileSync(fixturePath, 'utf8')) as Record<string, unknown>;
+  return fromJson(models.core_v1.RecordSchema, { data: recordData });
+}
+
+async function pushCatalogFixture(client: Client): Promise<string> {
+  const recordRefs = await client.push([loadCatalogFixtureRecord()]);
+  const cid = recordRefs[0].cid;
+  const pulled = await client.pull(recordRefs);
+  const modules = pulled[0].data?.modules;
+  if (!Array.isArray(modules) || modules.length < 2) {
+    throw new Error('catalog fixture record lost modules after push');
+  }
+  return cid;
+}
+
+async function waitForCatalogEntry(client: Client, cid: string, timeoutMs = 60_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await client.getAgent(
+        create(models.catalog_v1.GetAgentRequestSchema, { cid }),
+      );
+      if (response.entry?.identifier.includes(cid)) {
+        return;
+      }
+    } catch {
+      // catalog entry not indexed yet
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error(`catalog entry for ${cid} not found within ${timeoutMs}ms`);
 }
 
 describe('Client', () => {
@@ -752,5 +792,55 @@ describe('Client', () => {
     // Unsigned records should return verified=false
     expect(verifyByCidResponse.verified).toBe(false);
     expect(verifyByCidResponse.errorMessage).toBeDefined();
+  });
+
+  describe('AIFinder', () => {
+    let catalogCid: string;
+
+    beforeAll(async () => {
+      catalogCid = await pushCatalogFixture(client);
+      await waitForCatalogEntry(client, catalogCid);
+    }, 90_000);
+
+    test('listAgents', async () => {
+      const response = await client.listAgents(
+        create(models.catalog_v1.ListAgentsRequestSchema, {
+          filter: 'displayName=burger_seller_agent',
+        }),
+      );
+
+      expect(response.results.length).toBeGreaterThan(0);
+      expect(response.results.some((entry) => entry.displayName === 'burger_seller_agent')).toBe(
+        true,
+      );
+    });
+
+    test('getAgent', async () => {
+      const response = await client.getAgent(
+        create(models.catalog_v1.GetAgentRequestSchema, { cid: catalogCid }),
+      );
+
+      expect(response.entry?.identifier.includes(catalogCid)).toBe(true);
+    });
+
+    test('getWellKnownCatalog', async () => {
+      const response = await client.getWellKnownCatalog(
+        create(models.catalog_v1.GetWellKnownCatalogRequestSchema, {}),
+      );
+
+      expect(response.catalog?.specVersion).toBeTruthy();
+      expect(response.catalog?.host?.displayName).toBeTruthy();
+    });
+
+    test('exportAgent', async () => {
+      const response = await client.exportAgent(
+        create(models.catalog_v1.ExportAgentRequestSchema, {
+          cid: catalogCid,
+          format: 'oasf',
+        }),
+      );
+
+      expect(response.data.length).toBeGreaterThan(0);
+    });
   });
 });

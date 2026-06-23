@@ -3,6 +3,19 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
+## 1.5.0 (2026-06-18)
+
+### Added
+
+- `AIFinderService` client methods: `listAgents`, `getAgent`, `exportAgent`, and `getWellKnownCatalog`.
+- `catalog_v1` model re-exports for AI Catalog protobuf types.
+- Integration tests for AI Finder against catalog-projectable OASF records.
+
+### Changed
+
+- Updated `@buf/agntcy_dir.bufbuild_es` to track [agntcy/dir][agntcy/dir] `v1.5.0`.
+- Bumped the directory chart and `dirctl` image used in CI to `v1.5.0`.
+
 ## 1.4.0 (2026-06-12)
 
 ### Added
