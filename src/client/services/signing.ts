@@ -3,22 +3,27 @@
 
 import type { Client } from '@connectrpc/connect';
 
-import type { Config } from '../config.js';
-import { signRecord } from '../dirctl/signing.js';
-import { verifyRecord } from '../dirctl/verification.js';
+import type { StoreService } from '../services/store.js';
+import { signRecord } from '../signing/sign.js';
+import { verifyRecord } from '../signing/verify.js';
 import * as models from '../../models/index.js';
 
 export class SignService {
-  private readonly config: Config;
+  private readonly storeService: StoreService;
   private readonly signClient: Client<typeof models.sign_v1.SignService>;
 
-  constructor(config: Config, signClient: Client<typeof models.sign_v1.SignService>) {
-    this.config = config;
+  constructor(storeService: StoreService, signClient: Client<typeof models.sign_v1.SignService>) {
+    this.storeService = storeService;
     this.signClient = signClient;
   }
 
-  sign(req: models.sign_v1.SignRequest): void {
-    signRecord(this.config, req);
+  async sign(req: models.sign_v1.SignRequest): Promise<void> {
+    try {
+      await signRecord(this.storeService, req);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to sign the object: ${message}`);
+    }
   }
 
   async verify(request: models.sign_v1.VerifyRequest): Promise<models.sign_v1.VerifyResponse> {
@@ -28,6 +33,6 @@ export class SignService {
       }
       return await this.signClient.verify(request);
     }
-    return verifyRecord(this.config, request);
+    return verifyRecord(this.storeService, request);
   }
 }

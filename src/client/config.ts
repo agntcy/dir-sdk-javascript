@@ -1,7 +1,6 @@
 // Copyright AGNTCY Contributors (https://github.com/agntcy)
 // SPDX-License-Identifier: Apache-2.0
 
-import { existsSync } from 'node:fs';
 import { env } from 'node:process';
 
 /**
@@ -43,77 +42,12 @@ function parseCommaScopes(value: string | undefined, defaultList: string[]): str
 }
 
 /**
- * Docker invocation settings for running dirctl in a container.
- *
- * @public
- */
-export class DockerConfig {
-  static DEFAULT_DIRCTL_IMAGE = 'ghcr.io/agntcy/dir-ctl';
-  static DEFAULT_DIRCTL_IMAGE_TAG = 'latest';
-
-  dirctlImage: string;
-  dirctlImageTag: string;
-  envs: Map<string, string>;
-  mounts: string[];
-  user: string;
-
-  constructor(
-    dirctlImage: string,
-    dirctlImageTag: string,
-    envs: Map<string, string>,
-    mounts: string[],
-    user: string,
-  ) {
-    this.dirctlImage = dirctlImage;
-    this.dirctlImageTag = dirctlImageTag;
-    this.envs = envs;
-    this.mounts = mounts;
-    this.user = user;
-  }
-
-  getDockerArgs(): string[] {
-    this.pruneMounts();
-    const commands = ['container', 'run', '--name=dir-ctl', '--rm', '--network', 'host'];
-    if (this.user) {
-      commands.push('--user');
-      commands.push(this.user);
-    }
-    this.envs.forEach((value: string, key: string) => {
-      commands.push('--env');
-      commands.push(`${key}=${value}`);
-    });
-    this.mounts.forEach((value: string) => {
-      commands.push('--mount');
-      commands.push(value);
-    });
-    commands.push(`${this.dirctlImage}:${this.dirctlImageTag}`);
-    return commands;
-  }
-
-  pruneMounts(): void {
-    this.mounts = this.mounts.filter((mount: string) => {
-      if (mount.startsWith('type=bind')) {
-        const parts = mount.split(',');
-        const srcPart = parts.find((p) => p.startsWith('src='));
-        if (srcPart === undefined) {
-          return false;
-        }
-        const _src = srcPart.split('=')[1];
-        return existsSync(_src);
-      }
-      return false;
-    });
-  }
-}
-
-/**
  * Configuration class for the AGNTCY Directory client.
  *
  * @public
  */
 export class Config {
   static DEFAULT_SERVER_ADDRESS = '127.0.0.1:8888';
-  static DEFAULT_DIRCTL_PATH = 'dirctl';
   static DEFAULT_SPIFFE_ENDPOINT_SOCKET = '';
   static DEFAULT_AUTH_MODE = '';
   static DEFAULT_AUTH_TOKEN = '';
@@ -132,7 +66,6 @@ export class Config {
   static DEFAULT_OIDC_SCOPES = ['openid', 'profile', 'email'];
 
   serverAddress: string;
-  dirctlPath: string;
   spiffeEndpointSocket: string;
   authMode: AuthMode;
   authToken: string;
@@ -151,11 +84,9 @@ export class Config {
   oidcCallbackPort: number;
   oidcAuthTimeout: number;
   oidcScopes: string[];
-  dockerConfig: DockerConfig | undefined;
 
   constructor(
     serverAddress = Config.DEFAULT_SERVER_ADDRESS,
-    dirctlPath = Config.DEFAULT_DIRCTL_PATH,
     spiffeEndpointSocket = Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
     authMode: AuthMode = Config.DEFAULT_AUTH_MODE as AuthMode,
     jwtAudience = Config.DEFAULT_JWT_AUDIENCE,
@@ -173,7 +104,6 @@ export class Config {
     oidcAuthTimeout = Config.DEFAULT_OIDC_AUTH_TIMEOUT,
     oidcScopes: string[] | undefined = undefined,
     oidcAccessToken: string | undefined = undefined,
-    dockerConfig: DockerConfig | undefined = undefined,
   ) {
     const resolvedAuthToken = [authToken, oidcAccessToken].find(Boolean) ?? '';
 
@@ -186,7 +116,6 @@ export class Config {
     }
 
     this.serverAddress = serverAddress;
-    this.dirctlPath = dirctlPath;
     this.spiffeEndpointSocket = spiffeEndpointSocket;
     this.authMode = authMode;
     this.authToken = resolvedAuthToken;
@@ -204,12 +133,9 @@ export class Config {
     this.oidcCallbackPort = oidcCallbackPort;
     this.oidcAuthTimeout = oidcAuthTimeout;
     this.oidcScopes = oidcScopes !== undefined ? [...oidcScopes] : [...Config.DEFAULT_OIDC_SCOPES];
-    this.dockerConfig = dockerConfig;
   }
 
   static loadFromEnv(prefix = 'DIRECTORY_CLIENT_') {
-    const dirctlPath = env.DIRCTL_PATH ?? Config.DEFAULT_DIRCTL_PATH;
-
     const serverAddress = env[`${prefix}SERVER_ADDRESS`] ?? Config.DEFAULT_SERVER_ADDRESS;
     const spiffeEndpointSocketPath =
       env[`${prefix}SPIFFE_SOCKET_PATH`] ?? Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET;
@@ -239,22 +165,8 @@ export class Config {
     );
     const oidcScopes = parseCommaScopes(env[`${prefix}OIDC_SCOPES`], Config.DEFAULT_OIDC_SCOPES);
 
-    let dockerConfig: DockerConfig | undefined = undefined;
-    const dirctlImage = env.DIRCTL_IMAGE;
-    const dirctlImageTag = env.DIRCTL_IMAGE_TAG;
-    if (dirctlImage || dirctlImageTag) {
-      dockerConfig = new DockerConfig(
-        dirctlImage ?? DockerConfig.DEFAULT_DIRCTL_IMAGE,
-        dirctlImageTag ?? DockerConfig.DEFAULT_DIRCTL_IMAGE_TAG,
-        new Map<string, string>(),
-        [],
-        '0:0',
-      );
-    }
-
     return new Config(
       serverAddress,
-      dirctlPath,
       spiffeEndpointSocketPath,
       authMode,
       jwtAudience,
@@ -271,16 +183,6 @@ export class Config {
       oidcCallbackPort,
       oidcAuthTimeout,
       oidcScopes,
-      undefined,
-      dockerConfig,
     );
-  }
-
-  getCommandAndArgs(args: string[]): [string, string[]] {
-    if (this.dockerConfig) {
-      const dockerArgs = this.dockerConfig.getDockerArgs();
-      return ['docker', dockerArgs.concat(args)];
-    }
-    return [`${this.dirctlPath}`, args];
   }
 }

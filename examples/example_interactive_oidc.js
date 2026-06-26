@@ -78,7 +78,6 @@ function parseOidcAuthTimeout() {
 function buildConfig() {
   return new Config(
     process.env.DIRECTORY_CLIENT_SERVER_ADDRESS ?? DEFAULT_SERVER_ADDRESS,
-    Config.DEFAULT_DIRCTL_PATH,
     Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
     "oidc",
     Config.DEFAULT_JWT_AUDIENCE,

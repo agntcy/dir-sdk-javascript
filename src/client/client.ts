@@ -162,7 +162,7 @@ export class Client {
     this.routingService = new RoutingService(this.routingClient);
     this.publicationService = new PublicationService(this.publicationClient);
     this.searchService = new SearchService(this.searchClient);
-    this.signService = new SignService(resolvedConfig, this.signClient);
+    this.signService = new SignService(this.storeService, this.signClient);
     this.syncService = new SyncService(this.syncClient);
     this.eventService = new EventService(this.eventClient);
     this.namingService = new NamingService(this.namingClient);
@@ -246,8 +246,8 @@ export class Client {
     return this.storeService.deleteReferrer(request);
   }
 
-  sign(req: SignRequest): void {
-    this.signService.sign(req);
+  async sign(req: SignRequest): Promise<void> {
+    await this.signService.sign(req);
   }
 
   async verify(request: VerifyRequest): Promise<VerifyResponse> {

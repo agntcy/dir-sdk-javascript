@@ -10,10 +10,6 @@ on:
         required: true
         type: string
         description: "The version of the dir Helm chart to install for the tests."
-      dirctl_image_tag:
-        required: true
-        type: string
-        description: "The tag of the dir-ctl Docker image to use in the tests."
 
 permissions:
   id-token: write
@@ -69,5 +65,4 @@ jobs:
       - name: Test JavaScript SDK
         env:
           DIR_CHART_VERSION: ${{ inputs.dir_chart_version }}
-          DIRCTL_IMAGE_TAG: ${{ inputs.dirctl_image_tag }}
         run: task test

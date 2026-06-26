@@ -67,7 +67,6 @@ describe('OIDC auth client', () => {
 
     const config = new Config(
       'directory.example.com:443',
-      Config.DEFAULT_DIRCTL_PATH,
       Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
       'oidc',
       Config.DEFAULT_JWT_AUDIENCE,
@@ -91,7 +90,6 @@ describe('OIDC auth client', () => {
 
     const config = new Config(
       'directory.example.com:443',
-      Config.DEFAULT_DIRCTL_PATH,
       Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
       'oidc',
     );
@@ -132,7 +130,6 @@ describe('OIDC auth client', () => {
 
     const config = new Config(
       'directory.example.com:443',
-      Config.DEFAULT_DIRCTL_PATH,
       Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
       'oidc',
     );
@@ -157,7 +154,6 @@ describe('OIDC auth client', () => {
 
     const config = new Config(
       'directory.example.com:443',
-      Config.DEFAULT_DIRCTL_PATH,
       Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
       'oidc',
       Config.DEFAULT_JWT_AUDIENCE,
@@ -195,7 +191,6 @@ describe('OIDC auth client', () => {
 
     const config = new Config(
       'directory.example.com:443',
-      Config.DEFAULT_DIRCTL_PATH,
       Config.DEFAULT_SPIFFE_ENDPOINT_SOCKET,
       'oidc',
       Config.DEFAULT_JWT_AUDIENCE,

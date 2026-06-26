@@ -4,7 +4,6 @@
 export {
   Client,
   Config,
-  DockerConfig,
   OAuthPkceError,
   OAuthSessionManager,
   OAuthTokenHolder,
