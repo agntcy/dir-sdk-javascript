@@ -1,7 +1,7 @@
 # Directory JavaScript SDK
 
 [![npm version](https://img.shields.io/npm/v/agntcy-dir.svg)](https://www.npmjs.com/package/agntcy-dir)
-
+[![Coverage](https://codecov.io/gh/agntcy/dir-sdk-javascript/branch/main/graph/badge.svg)](https://codecov.io/gh/agntcy/dir-sdk-javascript)
 ## Overview
 
 Dir JavaScript SDK provides a simple way to interact with the Directory API.

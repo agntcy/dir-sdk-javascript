@@ -124,7 +124,7 @@ tasks:
         export COSIGN_PATH="$(printf "%s" "${COSIGN_PATH:-{{ .COSIGN_BIN }}}")"
 
         # Run SDK tests
-        npm run test
+        npm run test:coverage
 
         # Run SDK example to verify it works
         cd {{ .ROOT_DIR }}/examples
