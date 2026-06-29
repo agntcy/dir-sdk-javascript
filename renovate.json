@@ -9,16 +9,22 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/(^|/)Taskfile[^/]*\\.yml$/"],
+      "managerFilePatterns": [
+        "/(^|/)Taskfile[^/]*\\.yml$/"
+      ],
       "matchStrings": [
         "(?m)^\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+registryUrl=(?<registryUrl>\\S+))?\\s*\\r?\\n\\s*(?<varName>[A-Z0-9_]+)_VERSION:\\s+\"?(?<currentValue>[^\"@\\s]+)\"?\\s*$"
       ],
       "currentValueTemplate": "{{currentValue}}",
-      "description": ["Custom dependency manager for updating tool version defined in Taskfile."]
+      "description": [
+        "Custom dependency manager for updating tool version defined in Taskfile."
+      ]
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/(^|/)Taskfile[^/]*\\.yml$/"],
+      "managerFilePatterns": [
+        "/(^|/)Taskfile[^/]*\\.yml$/"
+      ],
       "matchStrings": [
         "(?m)^\\s*#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+registryUrl=(?<registryUrl>\\S+))?\\s*\\r?\\n\\s*(?<varName>[A-Z0-9_]+)_VERSION:\\s+\"?(?:(?<currentValue>[^@\"\\s]+)@)?(?<currentDigest>sha256:[a-f0-9]+)\"?\\s*$"
       ],
@@ -36,8 +42,16 @@
     "before 8am on Wednesday",
     "before 8am on Friday"
   ],
-  "enabledManagers": ["custom.regex", "github-actions", "npm", "nvm", "nodenv"],
-  "labels": ["dependencies"],
+  "enabledManagers": [
+    "custom.regex",
+    "github-actions",
+    "npm",
+    "nvm",
+    "nodenv"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "ignoreDeps": [
     "@buf/agntcy_dir.bufbuild_es",
     "@buf/bufbuild_protovalidate.bufbuild_es",
@@ -49,15 +63,14 @@
   },
   "packageRules": [
     {
-      "matchUpdateTypes": ["major"],
-      "enabled": false,
-      "description": ["Ignore major dependency updates."]
-    },
-    {
       "groupName": "Node",
       "groupSlug": "node",
-      "matchFileNames": ["package.json"],
-      "addLabels": ["dependencies"],
+      "matchFileNames": [
+        "package.json"
+      ],
+      "addLabels": [
+        "dependencies"
+      ],
       "description": [
         "Add dependencies label to PRs which are related to Node dependencies.",
         "Group Node dependency updates in single PR."
@@ -66,8 +79,12 @@
     {
       "groupName": "Taskfile",
       "groupSlug": "taskfile",
-      "matchFileNames": ["Taskfile.*"],
-      "addLabels": ["build"],
+      "matchFileNames": [
+        "Taskfile.*"
+      ],
+      "addLabels": [
+        "build"
+      ],
       "description": [
         "Add build label to PRs which are related to build tools defined in Taskfile.",
         "Group Taskfile dependency updates in single PR."
@@ -76,18 +93,24 @@
     {
       "groupName": "Github Actions",
       "groupSlug": "github-actions",
-      "matchDatasources": ["github-tags"],
-      "addLabels": ["ci"],
+      "matchManagers": [
+        "github-actions"
+      ],
+      "addLabels": [
+        "ci"
+      ],
       "description": [
         "Add ci label to PRs which are related to Github Actions.",
         "Group CI dependency updates in single PR."
       ]
     },
     {
-      "matchJsonata": ["$exists(vulnerabilityFixVersion) or isVulnerabilityAlert = true"],
+      "matchJsonata": [
+        "$exists(vulnerabilityFixVersion) or isVulnerabilityAlert = true"
+      ],
       "enabled": true,
       "description": [
-        "Always allow vulnerability/security fixes, even when other rules disable majors or specific dependencies."
+        "Always allow vulnerability/security fixes, even when other rules disable specific dependencies."
       ]
     }
   ],
@@ -101,8 +124,12 @@
   "timezone": "Etc/UTC",
   "vulnerabilityAlerts": {
     "enabled": true,
-    "labels": ["security"],
+    "labels": [
+      "security"
+    ],
     "minimumReleaseAge": null,
-    "schedule": ["at any time"]
+    "schedule": [
+      "at any time"
+    ]
   }
 }
