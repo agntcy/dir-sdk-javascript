@@ -41,7 +41,7 @@ export function createOidcTransport(config: Config, holder: OAuthTokenHolder): T
     try {
       ca = readFileSync(config.tlsCaFile).toString();
     } catch (e) {
-      throw new Error(`Failed to read TLS CA file: ${(e as Error).message}`);
+      throw new Error(`Failed to read TLS CA file: ${(e as Error).message}`, { cause: e });
     }
   }
   const nodeBase: http2.SecureClientSessionOptions = {};
