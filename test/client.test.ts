@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { pool as workerpool } from 'workerpool';
 import { rmSync, realpathSync } from 'node:fs';
 import { env } from 'node:process';
-import { create, fromJson } from '@bufbuild/protobuf';
+import { create, fromJson, type JsonValue } from '@bufbuild/protobuf';
 
 import { validate as isValidUUID } from 'uuid';
 import { v4 as uuidv4 } from 'uuid';
@@ -71,7 +71,7 @@ const testDir = dirname(fileURLToPath(import.meta.url));
 
 function loadCatalogFixtureRecord(): models.core_v1.Record {
   const fixturePath = join(testDir, 'testdata', 'record_100.json');
-  const recordData = JSON.parse(readFileSync(fixturePath, 'utf8')) as Record<string, unknown>;
+  const recordData = JSON.parse(readFileSync(fixturePath, 'utf8')) as JsonValue;
   return fromJson(models.core_v1.RecordSchema, { data: recordData });
 }
 

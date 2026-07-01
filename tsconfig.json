@@ -11,8 +11,11 @@
       // DOM for the fetch and streams API
       "DOM",
       // ES2018.AsyncIterable for AsyncIterator
-      "ES2018.AsyncIterable"
+      "ES2018.AsyncIterable",
+      // Error constructor options (cause)
+      "ES2022.Error"
     ],
+    "types": ["node"],
     "declaration": true,
     "strict": true,
     "resolveJsonModule": true,

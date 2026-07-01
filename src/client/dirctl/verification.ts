@@ -21,7 +21,10 @@ function runVerifyCommand(config: Config, args: string[]): void {
   });
 
   if (output.status !== 0) {
-    throw new Error(output.stderr || output.stdout || 'Verification failed');
+    const message =
+      [output.stderr, output.stdout].map((s) => s.trim()).find((s) => s.length > 0) ??
+      'Verification failed';
+    throw new Error(message);
   }
 }
 
@@ -141,7 +144,7 @@ export function verifyRecord(
 
     return fromJsonString(models.sign_v1.VerifyResponseSchema, jsonContent);
   } catch (e) {
-    throw new Error(`Failed to parse verification response: ${e}`);
+    throw new Error(`Failed to parse verification response: ${e}`, { cause: e });
   } finally {
     try {
       rmSync(tempDir, { recursive: true, force: true });

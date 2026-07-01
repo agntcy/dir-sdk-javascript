@@ -20,6 +20,6 @@ export async function invoke<T>(opName: string, call: () => Promise<T>): Promise
     return await call();
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    throw new Error(`${opName} failed: ${msg}`);
+    throw new Error(`${opName} failed: ${msg}`, { cause: e });
   }
 }

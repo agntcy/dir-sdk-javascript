@@ -253,7 +253,7 @@ export async function runLoopbackPkceLogin(
   if (parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
     throw new Error('loopback PKCE requires redirect host localhost or 127.0.0.1');
   }
-  let path = parsed.pathname || '/';
+  let path = parsed.pathname ?? '/';
   if (!path.startsWith('/')) {
     path = `/${path}`;
   }
