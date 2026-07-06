@@ -10,7 +10,7 @@ import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   {
-    ignores: ['dist/**', 'node_modules/**', 'examples/**', '*.config.mjs'],
+    ignores: ['dist/**', 'node_modules/**', 'examples/**', '*.config.mjs', 'coverage/**'],
   },
   {
     files: ['src/**/*.ts', 'test/**/*.ts'],
