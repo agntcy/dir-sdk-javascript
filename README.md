@@ -30,6 +30,17 @@ The Directory SDK provides comprehensive access to all Directory APIs with a sim
 - **Content Discovery**: List and query published records across the network
 - **Network Management**: Unpublish records to remove them from network discovery
 
+### **Publication API**
+- **Publication Lifecycle**: Create, retrieve, and list record publications
+- **Stable References**: Get and manage publications by ID for long-lived record references
+
+### **Naming API**
+- **Name Resolution**: Resolve human-readable names to record references
+- **Verification Info**: Retrieve signing and verification metadata by name, version, or CID
+
+### **Events API**
+- **Real-time Streaming**: Subscribe to Directory events with an async iterable gRPC stream
+
 ### **Signing and Verification**
 - **Local Signing**: Sign records locally using private keys or OIDC-based authentication.
   Requires [dirctl](https://github.com/agntcy/dir/releases) binary to perform signing.
@@ -79,29 +90,26 @@ process.env.DIRECTORY_CLIENT_JWT_AUDIENCE = "spiffe://example.org/dir-server";
 import {Config, Client} from 'agntcy-dir';
 
 // Insecure mode (default, for development only)
-const config = new Config(
-    serverAddress="localhost:8888",
-    dirctlPath="/usr/local/bin/dirctl"
-);
+const config = new Config("localhost:8888", "/usr/local/bin/dirctl");
 const client = new Client(config);
 
 // X.509 authentication with SPIRE
 const x509Config = new Config(
-    "localhost:8888", 
-    "/usr/local/bin/dirctl",
-    "/tmp/agent.sock",  // SPIFFE socket path
-    "x509"  // auth mode
+    "localhost:8888",          // serverAddress
+    "/usr/local/bin/dirctl",   // dirctlPath
+    "/tmp/agent.sock",         // spiffeEndpointSocket
+    "x509"                     // authMode
 );
 const x509Transport = await Client.createGRPCTransport(x509Config);
 const x509Client = new Client(x509Config, x509Transport);
 
 // JWT authentication with SPIRE
 const jwtConfig = new Config(
-    "localhost:8888",
-    "/usr/local/bin/dirctl",
-    "/tmp/agent.sock",  // SPIFFE socket path
-    "jwt",  // auth mode
-    "spiffe://example.org/dir-server"  // JWT audience
+    "localhost:8888",                        // serverAddress
+    "/usr/local/bin/dirctl",                 // dirctlPath
+    "/tmp/agent.sock",                       // spiffeEndpointSocket
+    "jwt",                                   // authMode
+    "spiffe://example.org/dir-server"        // jwtAudience
 );
 const jwtTransport = await Client.createGRPCTransport(jwtConfig);
 const jwtClient = new Client(jwtConfig, jwtTransport);
@@ -178,7 +186,7 @@ npm install agntcy-dir
 
 ### Usage Examples
 
-See the [Example JavaScript Project](../examples/example-js/) for a complete working example that demonstrates all SDK features.
+See the [Example JavaScript Project](examples/) for a complete working example that demonstrates all SDK features.
 
 ```bash
 npm install
