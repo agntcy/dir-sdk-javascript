@@ -4,16 +4,6 @@
 import { Client as GrpcClient, createClient, type Transport } from '@connectrpc/connect';
 import { createGrpcTransport as createConnectGrpcTransport } from '@connectrpc/connect-node';
 
-import type {
-  ExportAgentRequest,
-  GetAgentRequest,
-  GetAgentResponse,
-  GetWellKnownCatalogRequest,
-  GetWellKnownCatalogResponse,
-  HttpBody,
-  ListAgentsRequest,
-  ListAgentsResponse,
-} from '../models/catalog_v1';
 import type { Record, RecordMeta, RecordRef } from '../models/core_v1';
 import type { ListenRequest, ListenResponse } from '../models/events_v1';
 import type {
@@ -58,7 +48,6 @@ import type {
   PushReferrerRequest,
   PushReferrerResponse,
 } from '../models/store_v1';
-import * as catalog_v1 from '../models/catalog_v1';
 import * as events_v1 from '../models/events_v1';
 import * as naming_v1 from '../models/naming_v1';
 import * as routing_v1 from '../models/routing_v1';
@@ -68,7 +57,6 @@ import * as store_v1 from '../models/store_v1';
 import { OAuthSessionManager } from './auth/session.js';
 import { Config } from './config.js';
 import {
-  AIFinderService,
   EventService,
   NamingService,
   PublicationService,
@@ -106,8 +94,6 @@ export class Client {
   eventClient: GrpcClient<typeof events_v1.EventService>;
   /** @internal */
   namingClient: GrpcClient<typeof naming_v1.NamingService>;
-  /** @internal */
-  aiFinderClient: GrpcClient<typeof catalog_v1.AIFinderService>;
 
   /** @internal */
   storeService: StoreService;
@@ -125,8 +111,6 @@ export class Client {
   eventService: EventService;
   /** @internal */
   namingService: NamingService;
-  /** @internal */
-  aiFinderService: AIFinderService;
 
   constructor(config?: Config, grpcTransport?: Transport) {
     const resolvedConfig = config ?? Config.loadFromEnv();
@@ -156,7 +140,6 @@ export class Client {
     this.syncClient = createClient(store_v1.SyncService, transport);
     this.eventClient = createClient(events_v1.EventService, transport);
     this.namingClient = createClient(naming_v1.NamingService, transport);
-    this.aiFinderClient = createClient(catalog_v1.AIFinderService, transport);
 
     this.storeService = new StoreService(this.storeClient);
     this.routingService = new RoutingService(this.routingClient);
@@ -166,7 +149,6 @@ export class Client {
     this.syncService = new SyncService(this.syncClient);
     this.eventService = new EventService(this.eventClient);
     this.namingService = new NamingService(this.namingClient);
-    this.aiFinderService = new AIFinderService(this.aiFinderClient);
   }
 
   static async createGRPCTransport(
@@ -294,23 +276,5 @@ export class Client {
     request: GetVerificationInfoRequest,
   ): Promise<GetVerificationInfoResponse> {
     return this.namingService.getVerificationInfo(request);
-  }
-
-  async listAgents(request: ListAgentsRequest): Promise<ListAgentsResponse> {
-    return this.aiFinderService.listAgents(request);
-  }
-
-  async getAgent(request: GetAgentRequest): Promise<GetAgentResponse> {
-    return this.aiFinderService.getAgent(request);
-  }
-
-  async exportAgent(request: ExportAgentRequest): Promise<HttpBody> {
-    return this.aiFinderService.exportAgent(request);
-  }
-
-  async getWellKnownCatalog(
-    request: GetWellKnownCatalogRequest,
-  ): Promise<GetWellKnownCatalogResponse> {
-    return this.aiFinderService.getWellKnownCatalog(request);
   }
 }

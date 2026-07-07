@@ -1,7 +1,6 @@
 // Copyright AGNTCY Contributors (https://github.com/agntcy)
 // SPDX-License-Identifier: Apache-2.0
 
-export { AIFinderService } from './aiFinder.js';
 export { collectStream, invoke, requestGenerator } from './base.js';
 export { StoreService } from './store.js';
 export { RoutingService } from './routing.js';
