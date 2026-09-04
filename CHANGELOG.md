@@ -3,6 +3,11 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
+### Changed
+
+- Updated `@buf/agntcy_dir.bufbuild_es` to track [agntcy/dir][agntcy/dir] `v1.7.0`.
+- Bumped the directory chart and `dirctl` image used in CI to `v1.7.0`.
+
 ## 1.5.0 (2026-06-18)
 
 ### Added
