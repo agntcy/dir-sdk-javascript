@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: "0 */6 * * *"
 
+# Declare default permissions as read-only; the job authenticates via the
+# GitHub App token instead of relying on the default GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
   renovate:
     name: Renovate Sync

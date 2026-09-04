@@ -22,11 +22,9 @@ on:
         type: string
         description: "Override the tag of the dir-ctl Docker image to use in the tests."
 
+# Declare default permissions as read-only; jobs that need more request it explicitly.
 permissions:
-  contents: write
-  packages: write
-  id-token: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -97,6 +95,10 @@ jobs:
     name: Test
     needs:
       - changes
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
     uses: ./.github/workflows/reusable-test-sdk.yaml
     with:
       dir_chart_version: ${{ inputs.dir_chart_version }}
@@ -108,6 +110,9 @@ jobs:
     needs:
       - lint
       - test
+    permissions:
+      contents: read
+      id-token: write # Required for npm OIDC trusted publishing
     uses: ./.github/workflows/reusable-release-sdk.yaml
 
   success:
