@@ -86,6 +86,6 @@
   "author": "",
   "allowScripts": {
     "fsevents@2.3.3": true,
-    "protobufjs@7.6.4": true
+    "protobufjs@7.6.6": true
   }
 }
