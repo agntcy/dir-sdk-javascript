@@ -43,7 +43,7 @@
     "pretest:coverage": "npm run build",
     "test:coverage": "vitest run --coverage"
   },
-  "packageManager": "npm@11.19.0",
+  "packageManager": "npm@12.0.2",
   "dependencies": {
     "@buf/agntcy_dir.bufbuild_es": "2.12.0-20260617162622-804385aa416f.1",
     "@bufbuild/protobuf": "^2.12.0",
@@ -65,7 +65,7 @@
     "prettier": "^3.9.6",
     "rollup-plugin-typescript2": "^0.37.0",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.0",
     "typescript-eslint": "^8.67.0",
     "uuid": "^14.0.2",
     "vitest": "^4.1.11",
