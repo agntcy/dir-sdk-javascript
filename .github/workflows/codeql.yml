@@ -3,6 +3,9 @@
 
 name: "CodeQL Advanced"
 
+# Declare default permissions as none; the analyze job grants exactly what it needs.
+permissions: {}
+
 on:
   push:
     branches:
@@ -51,12 +54,12 @@ jobs:
           echo "📦 Installing JavaScript/TypeScript dependencies..."
           # Install dependencies for JavaScript SDK
           if [ -f "package.json" ]; then
-            npm ci || npm install
+            npm ci
           fi
           # Install dependencies for examples
           if [ -f "examples/package.json" ]; then
             cd examples
-            npm ci || npm install
+            npm ci
             cd ..
           fi
           echo "✅ JavaScript/TypeScript dependencies installed"
