@@ -46,6 +46,18 @@
       ]
     }
   ],
+  "customDatasources": {
+    "buf-dir-npm": {
+      "defaultRegistryUrlTemplate": "https://buf.build/gen/npm/v1/@buf/agntcy_dir.bufbuild_es",
+      "format": "json",
+      "transformTemplates": [
+        "(\n  $d := $;\n  $tags := $d.`dist-tags`;\n  $commits := $keys($tags)[$contains($, /^label-v\\d+\\.\\d+\\.\\d+$/)].$lookup($tags, $).$match($, /-([a-f0-9]{12})\\.\\d+$/).groups[0];\n  {\"releases\": [$keys($d.versions)[$match($, /-([a-f0-9]{12})\\.\\d+$/).groups[0] in $commits].{\"version\": $}]}\n)"
+      ],
+      "description": [
+        "Releases of the Directory Buf JS SDK generated from commits labeled with a Directory release tag (label-vX.Y.Z)."
+      ]
+    }
+  },
   "enabled": true,
   "minimumReleaseAge": "7 days",
   "prCreation": "not-pending",
@@ -65,7 +77,6 @@
     "dependencies"
   ],
   "ignoreDeps": [
-    "@buf/agntcy_dir.bufbuild_es",
     "@buf/bufbuild_protovalidate.bufbuild_es",
     "@bufbuild/protobuf"
   ],
@@ -89,6 +100,22 @@
       "description": [
         "Add dependencies label to PRs which are related to Node dependencies.",
         "Group Node dependency updates in single PR."
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "@buf/agntcy_dir.bufbuild_es"
+      ],
+      "overrideDatasource": "custom.buf-dir-npm",
+      "allowedVersions": "/^2\\.14\\.1-/",
+      "groupName": "Directory",
+      "groupSlug": "directory",
+      "addLabels": [
+        "build"
+      ],
+      "description": [
+        "Bump the Directory Buf SDK only to commits labeled with a Directory release tag, in the same PR as the Directory version bump.",
+        "The plugin version prefix (2.14.1) is pinned via allowedVersions and has to be bumped manually."
       ]
     },
     {
