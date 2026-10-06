@@ -11,7 +11,7 @@ import type {
   GetVerificationInfoResponse,
   ResolveRequest,
   ResolveResponse,
-} from '../models/naming_v1';
+} from '../models/identity_v1';
 import type {
   CreatePublicationResponse,
   GetPublicationRequest,
@@ -49,7 +49,7 @@ import type {
   PushReferrerResponse,
 } from '../models/store_v1';
 import * as events_v1 from '../models/events_v1';
-import * as naming_v1 from '../models/naming_v1';
+import * as identity_v1 from '../models/identity_v1';
 import * as routing_v1 from '../models/routing_v1';
 import * as search_v1 from '../models/search_v1';
 import * as sign_v1 from '../models/sign_v1';
@@ -58,7 +58,7 @@ import { OAuthSessionManager } from './auth/session.js';
 import { Config } from './config.js';
 import {
   EventService,
-  NamingService,
+  IdentityService,
   PublicationService,
   RoutingService,
   SearchService,
@@ -93,7 +93,7 @@ export class Client {
   /** @internal */
   eventClient: GrpcClient<typeof events_v1.EventService>;
   /** @internal */
-  namingClient: GrpcClient<typeof naming_v1.NamingService>;
+  identityClient: GrpcClient<typeof identity_v1.IdentityService>;
 
   /** @internal */
   storeService: StoreService;
@@ -110,7 +110,7 @@ export class Client {
   /** @internal */
   eventService: EventService;
   /** @internal */
-  namingService: NamingService;
+  identityService: IdentityService;
 
   constructor(config?: Config, grpcTransport?: Transport) {
     const resolvedConfig = config ?? Config.loadFromEnv();
@@ -139,7 +139,7 @@ export class Client {
     this.signClient = createClient(sign_v1.SignService, transport);
     this.syncClient = createClient(store_v1.SyncService, transport);
     this.eventClient = createClient(events_v1.EventService, transport);
-    this.namingClient = createClient(naming_v1.NamingService, transport);
+    this.identityClient = createClient(identity_v1.IdentityService, transport);
 
     this.storeService = new StoreService(this.storeClient);
     this.routingService = new RoutingService(this.routingClient);
@@ -148,7 +148,7 @@ export class Client {
     this.signService = new SignService(resolvedConfig, this.signClient);
     this.syncService = new SyncService(this.syncClient);
     this.eventService = new EventService(this.eventClient);
-    this.namingService = new NamingService(this.namingClient);
+    this.identityService = new IdentityService(this.identityClient);
   }
 
   static async createGRPCTransport(
@@ -269,12 +269,12 @@ export class Client {
   }
 
   async resolve(request: ResolveRequest): Promise<ResolveResponse> {
-    return this.namingService.resolve(request);
+    return this.identityService.resolve(request);
   }
 
   async getVerificationInfo(
     request: GetVerificationInfoRequest,
   ): Promise<GetVerificationInfoResponse> {
-    return this.namingService.getVerificationInfo(request);
+    return this.identityService.getVerificationInfo(request);
   }
 }
