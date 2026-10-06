@@ -18,7 +18,7 @@ export type {
   GetVerificationInfoResponse,
   ResolveRequest,
   ResolveResponse,
-} from './models/naming_v1';
+} from './models/identity_v1';
 export type {
   CreatePublicationResponse,
   GetPublicationRequest,

@@ -713,7 +713,7 @@ describe('Client', () => {
     expect(recordRefs).toHaveLength(1);
 
     // Resolve by name
-    const resolveRequest = create(models.naming_v1.ResolveRequestSchema, {
+    const resolveRequest = create(models.identity_v1.ResolveRequestSchema, {
       name: recordName,
     });
     const resolveResponse = await client.resolve(resolveRequest);
@@ -726,7 +726,7 @@ describe('Client', () => {
     expect(resolveResponse.records[0].version).toEqual(recordVersion);
 
     // Resolve by name with version
-    const resolveWithVersionRequest = create(models.naming_v1.ResolveRequestSchema, {
+    const resolveWithVersionRequest = create(models.identity_v1.ResolveRequestSchema, {
       name: recordName,
       version: recordVersion,
     });
@@ -743,10 +743,9 @@ describe('Client', () => {
     const recordRefs = await client.push(records);
 
     // Get verification info by CID (record is not signed, so it should return unverified)
-    const verifyByCidRequest = create(models.naming_v1.GetVerificationInfoRequestSchema, {
+    const verifyByCidResponse = await client.getVerificationInfo({
       cid: recordRefs[0].cid,
     });
-    const verifyByCidResponse = await client.getVerificationInfo(verifyByCidRequest);
 
     expect(verifyByCidResponse).not.toBeNull();
     // Unsigned records should return verified=false
