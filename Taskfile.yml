@@ -12,7 +12,7 @@ vars:
   DIRCTL_IMAGE_TAG: '{{ .DIRCTL_IMAGE_TAG | default "v1.7.1" }}'
 
   # renovate: datasource=github-releases depName=renovatebot/renovate versioning=semver
-  RENOVATE_VERSION: "44.93.5"
+  RENOVATE_VERSION: "44.115.13"
 
   BIN_DIR: "{{ .ROOT_DIR }}/.bin"
 
@@ -21,7 +21,7 @@ vars:
   HELM_BIN: "{{ .BIN_DIR }}/helm-{{.HELM_VERSION}}"
 
   # renovate: datasource=github-releases depName=kubernetes/kubernetes versioning=semver
-  KUBECTL_VERSION: "1.37.0"
+  KUBECTL_VERSION: "1.37.1"
   KUBECTL_BIN: "{{ .BIN_DIR }}/kubectl-{{.KUBECTL_VERSION}}"
 
   # renovate: datasource=go depName=sigs.k8s.io/kind versioning=semver
