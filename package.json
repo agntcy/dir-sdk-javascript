@@ -72,7 +72,7 @@
     "workerpool": "^10.0.3"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.63.6"
+    "@rollup/rollup-linux-x64-gnu": "4.64.0"
   },
   "engines": {
     "node": ">=20.0.0"
