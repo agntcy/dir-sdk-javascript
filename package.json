@@ -45,7 +45,7 @@
   },
   "packageManager": "npm@11.21.0",
   "dependencies": {
-    "@buf/agntcy_dir.bufbuild_es": "2.16.0-20261006085230-1106da22f446.1",
+    "@buf/agntcy_dir.bufbuild_es": "2.16.0-20261015113725-c24aeb0a65d8.1",
     "@bufbuild/protobuf": "^2.12.0",
     "@connectrpc/connect": "^2.2.0",
     "@connectrpc/connect-node": "^2.2.0",
