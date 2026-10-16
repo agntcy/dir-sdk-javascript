@@ -8,5 +8,5 @@ export { SearchService } from './search.js';
 export { PublicationService } from './publication.js';
 export { SyncService } from './sync.js';
 export { EventService } from './events.js';
-export { NamingService } from './naming.js';
+export { IdentityService } from './identity.js';
 export { SignService } from './signing.js';
