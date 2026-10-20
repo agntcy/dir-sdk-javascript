@@ -155,10 +155,7 @@ export async function verifyWithFetcher(
         default:
           throw new Error('unsupported verification provider type');
       }
-    } catch (e) {
-      if (request.case === undefined) {
-        throw e;
-      }
+    } catch {
       continue; // Failed verifications have no SignerInfo; only verified signers are reported
     }
 

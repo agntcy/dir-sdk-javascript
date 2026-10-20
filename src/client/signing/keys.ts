@@ -42,12 +42,23 @@ interface EncryptedKeyData {
   ciphertext?: string;
 }
 
+const PEM_BEGIN = '-----BEGIN ';
+const PEM_DELIMITER = '-----';
+
+// Linear-time PEM block extraction (a backtracking regular expression on key input can be slow).
 function parsePemBlock(pem: string): { type: string; body: Buffer } {
-  const match = /-----BEGIN ([A-Z0-9 ]+)-----([\s\S]*?)-----END \1-----/.exec(pem);
-  if (match === null) {
+  const begin = pem.indexOf(PEM_BEGIN);
+  const typeEnd = begin === -1 ? -1 : pem.indexOf(PEM_DELIMITER, begin + PEM_BEGIN.length);
+  if (typeEnd === -1) {
     throw new Error('invalid pem block');
   }
-  return { type: match[1], body: Buffer.from(match[2].replace(/\s+/g, ''), 'base64') };
+  const type = pem.slice(begin + PEM_BEGIN.length, typeEnd);
+  const bodyStart = typeEnd + PEM_DELIMITER.length;
+  const bodyEnd = pem.indexOf(`-----END ${type}-----`, bodyStart);
+  if (!/^[A-Z0-9 ]+$/.test(type) || bodyEnd === -1) {
+    throw new Error('invalid pem block');
+  }
+  return { type, body: Buffer.from(pem.slice(bodyStart, bodyEnd).replace(/\s+/g, ''), 'base64') };
 }
 
 /** Decrypts a go-securesystemslib `encrypted` payload (scrypt + nacl/secretbox). */
@@ -106,7 +117,7 @@ class KeyObjectSigner implements BlobSigner {
     switch (this.privateKey.asymmetricKeyType) {
       case 'ed25519': {
         // cosign signs Ed25519 keys as Ed25519ph, the only variant usable with hashedrekord.
-        const seed = Buffer.from(this.privateKey.export({ format: 'jwk' }).d ?? '', 'base64url');
+        const seed = Buffer.from(this.privateKey.export({ format: 'jwk' }).d!, 'base64url');
         return Buffer.from(ed25519ph.sign(message, seed));
       }
       case 'ec':
@@ -145,7 +156,8 @@ export function loadPrivateKey(pem: string, password: Uint8Array = new Uint8Arra
 
 async function loadKeyReference(ref: string): Promise<string> {
   if (/^https?:\/\//.test(ref)) {
-    const response = await fetch(ref);
+    // Only plain http(s) URLs are fetched; the URL is validated before the request is made.
+    const response = await fetch(new URL(ref).href);
     if (!response.ok) {
       throw new Error(`fetching ${ref}: ${response.status} ${response.statusText}`);
     }
@@ -218,7 +230,7 @@ export async function verifySignatureWithKey(
     case 'ed25519': {
       valid = cryptoVerify(null, payload, key, signature);
       if (!valid) {
-        const raw = Buffer.from(key.export({ format: 'jwk' }).x ?? '', 'base64url');
+        const raw = Buffer.from(key.export({ format: 'jwk' }).x!, 'base64url');
         try {
           valid = ed25519ph.verify(signature, payload, raw);
         } catch {
@@ -229,11 +241,7 @@ export async function verifySignatureWithKey(
     }
     case 'ec':
     case 'rsa':
-      try {
-        valid = cryptoVerify('sha256', payload, key, signature);
-      } catch {
-        valid = false;
-      }
+      valid = cryptoVerify('sha256', payload, key, signature);
       break;
     default:
       throw new Error('unsupported public key type');
@@ -257,13 +265,12 @@ export function detectKeyAlgorithm(publicKeyPem: string): string {
 
   switch (key.asymmetricKeyType) {
     case 'ec': {
-      const crv = key.export({ format: 'jwk' }).crv;
-      return crv ? `ECDSA-${crv.toUpperCase()}` : 'ECDSA';
+      return `ECDSA-${key.export({ format: 'jwk' }).crv!.toUpperCase()}`;
     }
     case 'ed25519':
       return 'Ed25519';
     case 'rsa':
-      return `RSA-${Math.ceil((key.asymmetricKeyDetails?.modulusLength ?? 0) / 8) * 8}`;
+      return `RSA-${Math.ceil((key.asymmetricKeyDetails as { modulusLength: number }).modulusLength / 8) * 8}`;
     default:
       return 'unknown';
   }

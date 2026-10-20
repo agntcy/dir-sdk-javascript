@@ -1,13 +1,12 @@
 // Copyright AGNTCY Contributors (https://github.com/agntcy)
 // SPDX-License-Identifier: Apache-2.0
 
-import { generateKeyPairSync, randomBytes, scryptSync, sign as cryptoSign } from 'node:crypto';
+import { generateKeyPairSync, sign as cryptoSign } from 'node:crypto';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { create } from '@bufbuild/protobuf';
-import { xsalsa20poly1305 } from '@noble/ciphers/salsa.js';
 import { describe, expect, test, vi } from 'vitest';
 
 import { SignService } from '../src/client/services/signing.js';
@@ -31,6 +30,7 @@ import {
   type Fetcher,
 } from '../src/client/signing/index.js';
 import { models } from '../src/index.js';
+import { encryptCosignKey } from './helpers/cosignKey.js';
 
 const CID = 'bafytestcid';
 const PASSWORD = 'testing-key';
@@ -47,23 +47,6 @@ interface Vector {
 const goVectors = JSON.parse(
   readFileSync(join(__dirname, 'testdata', 'cosign_key_vectors.json'), 'utf8'),
 ) as Vector[];
-
-/** Builds a cosign `ENCRYPTED SIGSTORE PRIVATE KEY` PEM (scrypt + nacl/secretbox). */
-function encryptCosignKey(der: Buffer, password: string): string {
-  const salt = randomBytes(32);
-  const nonce = randomBytes(24);
-  const params = { N: 32768, r: 8, p: 1 };
-  const key = scryptSync(password, salt, 32, { ...params, maxmem: 128 * 1024 * 1024 });
-  const payload = {
-    kdf: { name: 'scrypt', params, salt: salt.toString('base64') },
-    cipher: { name: 'nacl/secretbox', nonce: nonce.toString('base64') },
-    ciphertext: Buffer.from(xsalsa20poly1305(key, nonce).encrypt(der)).toString('base64'),
-  };
-  const body = Buffer.from(JSON.stringify(payload))
-    .toString('base64')
-    .replace(/(.{64})/g, '$1\n');
-  return `-----BEGIN ENCRYPTED SIGSTORE PRIVATE KEY-----\n${body}\n-----END ENCRYPTED SIGSTORE PRIVATE KEY-----\n`;
-}
 
 function signRequestWithKey(privateKey: string, password = ''): models.sign_v1.SignWithKey {
   return create(models.sign_v1.SignWithKeySchema, {
