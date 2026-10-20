@@ -23,7 +23,7 @@ Source and issue tracker: [github.com/agntcy/dir-sdk-javascript](https://github.
 | **Naming** | `resolve`, `getVerificationInfo` |
 | **Sync** | `create_sync`, `get_sync`, `list_syncs`, `delete_sync` |
 | **Events** | `listen` (async iterable server-stream) |
-| **Signing** | `sign` (local via `dirctl`), `verify` (remote gRPC) |
+| **Signing** | `sign` (native, key or OIDC), `verify` (local, or cached server result with `fromServer`) |
 
 ## Installation
 
@@ -51,7 +51,6 @@ need to pass what differs from the defaults.
 ```bash
 # Insecure (local development)
 export DIRECTORY_CLIENT_SERVER_ADDRESS="localhost:8888"
-export DIRCTL_PATH="/path/to/dirctl"
 
 # X.509 / SPIFFE
 export DIRECTORY_CLIENT_SERVER_ADDRESS="localhost:8888"
@@ -84,13 +83,12 @@ const client = new Client();  // reads DIRECTORY_CLIENT_* env vars
 import { Config, Client } from 'agntcy-dir';
 
 // Insecure (local development only)
-const config = new Config("localhost:8888", "/usr/local/bin/dirctl");
+const config = new Config("localhost:8888");
 const client = new Client(config);
 
 // X.509 with SPIRE
 const x509Config = new Config(
     "localhost:8888",        // serverAddress
-    "/usr/local/bin/dirctl", // dirctlPath
     "/tmp/agent.sock",       // spiffeEndpointSocket
     "x509"                   // authMode
 );
@@ -100,7 +98,6 @@ const x509Client = new Client(x509Config, x509Transport);
 // JWT with SPIRE
 const jwtConfig = new Config(
     "localhost:8888",
-    "/usr/local/bin/dirctl",
     "/tmp/agent.sock",
     "jwt",
     "spiffe://example.org/dir-server"  // jwtAudience
@@ -108,10 +105,6 @@ const jwtConfig = new Config(
 const jwtTransport = await Client.createGRPCTransport(jwtConfig);
 const jwtClient = new Client(jwtConfig, jwtTransport);
 ```
-
-!!! note
-
-    `dirctl` is only required for local signing operations. All other API calls work without it.
 
 ## OAuth 2.0 / OIDC bearer auth
 
@@ -151,7 +144,6 @@ import { Config, Client } from 'agntcy-dir';
 
 const config = new Config(
     "directory.example.com:443",
-    undefined,   // dirctlPath — not needed if signing is unused
     undefined,   // spiffeEndpointSocket
     "oidc",      // authMode
     undefined,   // jwtAudience
@@ -242,12 +234,38 @@ for await (const event of stream) {
 ### Signing and verification
 
 ```js
-// Sign a record locally (requires dirctl binary)
-client.sign({ cid });
+import { create } from '@bufbuild/protobuf';
+import { models } from 'agntcy-dir';
 
-// Verify a record signature via gRPC
-const resp = await client.verify({ cid });
-console.log(resp.valid);
+// Sign a record natively with a cosign key (PEM content or a key file path).
+// The public key and the signature are pushed to the store as referrers.
+await client.sign(create(models.sign_v1.SignRequestSchema, {
+    recordRef: { cid },
+    provider: {
+        request: {
+            case: 'key',
+            value: { privateKey: 'cosign.key', password: Buffer.from('key-password') },
+        },
+    },
+}));
+
+// Keyless signing with an OIDC token (Fulcio certificate, Rekor and TSA)
+await client.sign(create(models.sign_v1.SignRequestSchema, {
+    recordRef: { cid },
+    provider: { request: { case: 'oidc', value: { idToken: process.env.OIDC_TOKEN } } },
+}));
+
+// Verify the record signatures locally (key, OIDC identity or any provider)
+const resp = await client.verify(create(models.sign_v1.VerifyRequestSchema, {
+    recordRef: { cid },
+}));
+console.log(resp.success, resp.signers);
+
+// Or fetch the server-side (cached) verification result
+await client.verify(create(models.sign_v1.VerifyRequestSchema, {
+    recordRef: { cid },
+    fromServer: true,
+}));
 ```
 
 ## Error handling
@@ -279,9 +297,8 @@ Common codes: `Code.NotFound`, `Code.AlreadyExists`, `Code.Unavailable`,
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/) 18 or higher
+- [Node.js](https://nodejs.org/en/) 22.22.2, 24.15.0 or higher
 - [npm](https://www.npmjs.com/) package manager
-- [dirctl](https://github.com/agntcy/dir/releases) CLI binary (signing operations only)
 - A running Directory server — see [Quickstart](dir-quickstart.md) or
   [Kubernetes Deployment](dir-deployment-kubernetes.md)
 
@@ -309,31 +326,4 @@ Demonstrates the core store and routing workflow end-to-end:
 cd examples
 npm install
 npm run example
-```
-
-### `examples/example_interactive_oidc.js`
-
-**Source:** [`examples/example_interactive_oidc.js`](https://github.com/agntcy/dir-sdk-javascript/blob/main/examples/example_interactive_oidc.js)
-
-Demonstrates OIDC/PKCE interactive login. Reuses a cached token if one exists, otherwise
-opens the system browser for the authorization flow. Once authenticated, runs a `searchCIDs`
-query filtered by version. Accepts `--version` and `--limit` CLI arguments.
-
-**Required environment variable:**
-
-```bash
-export DIRECTORY_CLIENT_OIDC_CLIENT_ID="your-client-id"
-```
-
-**Optional overrides:** `DIRECTORY_CLIENT_SERVER_ADDRESS`, `DIRECTORY_CLIENT_OIDC_CLIENT_SECRET`,
-`DIRECTORY_CLIENT_OIDC_REDIRECT_URI`, `DIRECTORY_CLIENT_OIDC_CALLBACK_PORT`,
-`DIRECTORY_CLIENT_OIDC_AUTH_TIMEOUT`, `DIRECTORY_CLIENT_TLS_SERVER_NAME`,
-`DIRECTORY_CLIENT_AUTH_TOKEN` (skips the browser flow when a pre-issued token is available).
-
-**Run:**
-
-```bash
-cd examples
-npm install
-node example_interactive_oidc.js --version "v1*" --limit 3
 ```

@@ -4,7 +4,6 @@
 export {
   Client,
   Config,
-  DockerConfig,
   OAuthPkceError,
   OAuthSessionManager,
   OAuthTokenHolder,
@@ -38,7 +37,7 @@ export type {
   SearchRecordsRequest,
   SearchRecordsResponse,
 } from './models/search_v1';
-export type { SignRequest, VerifyRequest, VerifyResponse } from './models/sign_v1';
+export type { SignRequest, SignResponse, VerifyRequest, VerifyResponse } from './models/sign_v1';
 export type {
   CreateSyncRequest,
   CreateSyncResponse,

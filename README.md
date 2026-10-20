@@ -43,9 +43,10 @@ The Directory SDK provides comprehensive access to all Directory APIs with a sim
 - **Real-time Streaming**: Subscribe to Directory events with an async iterable gRPC stream
 
 ### **Signing and Verification**
-- **Local Signing**: Sign records locally using private keys or OIDC-based authentication.
-  Requires [dirctl](https://github.com/agntcy/dir/releases) binary to perform signing.
-- **Remote Verification**: Verify record signatures using the Directory gRPC API
+- **Local Signing**: Sign records natively using cosign private keys or OIDC-based (Sigstore keyless)
+  authentication. The public key and signature are stored as record referrers.
+- **Verification**: Verify record signatures locally against the signatures and public keys stored
+  with the record (key, OIDC identity or any), or fetch the server-side verification result
 
 ### **Developer Experience**
 - **Type Safety**: Full type hints for better IDE support and fewer runtime errors
@@ -74,7 +75,6 @@ The SDK can be configured via environment variables or direct instantiation:
 ```js
 // Environment variables (insecure mode)
 process.env.DIRECTORY_CLIENT_SERVER_ADDRESS = "localhost:8888";
-process.env.DIRCTL_PATH = "/path/to/dirctl";
 
 // Environment variables (X.509 authentication)
 process.env.DIRECTORY_CLIENT_SERVER_ADDRESS = "localhost:8888";
@@ -91,13 +91,12 @@ process.env.DIRECTORY_CLIENT_JWT_AUDIENCE = "spiffe://example.org/dir-server";
 import {Config, Client} from 'agntcy-dir';
 
 // Insecure mode (default, for development only)
-const config = new Config("localhost:8888", "/usr/local/bin/dirctl");
+const config = new Config("localhost:8888");
 const client = new Client(config);
 
 // X.509 authentication with SPIRE
 const x509Config = new Config(
     "localhost:8888",          // serverAddress
-    "/usr/local/bin/dirctl",   // dirctlPath
     "/tmp/agent.sock",         // spiffeEndpointSocket
     "x509"                     // authMode
 );
@@ -107,7 +106,6 @@ const x509Client = new Client(x509Config, x509Transport);
 // JWT authentication with SPIRE
 const jwtConfig = new Config(
     "localhost:8888",                        // serverAddress
-    "/usr/local/bin/dirctl",                 // dirctlPath
     "/tmp/agent.sock",                       // spiffeEndpointSocket
     "jwt",                                   // authMode
     "spiffe://example.org/dir-server"        // jwtAudience
@@ -159,7 +157,6 @@ For custom transports, call `Client.createGRPCTransport(oidcConfig, { oidcTokenH
 
 - [NodeJS](https://nodejs.org/en/) - JavaScript runtime
 - [npm](https://www.npmjs.com/) - Package manager
-- [dirctl](https://github.com/agntcy/dir/releases) - Directory CLI binary
 - Directory server instance (see setup below)
 
 ### 1. Server Setup

@@ -4,8 +4,7 @@
 import { describe, test, beforeAll, afterAll, expect } from 'vitest';
 
 import { execFileSync } from 'node:child_process';
-import { pool as workerpool } from 'workerpool';
-import { rmSync, realpathSync } from 'node:fs';
+import { rmSync } from 'node:fs';
 import { env } from 'node:process';
 import { create } from '@bufbuild/protobuf';
 
@@ -440,20 +439,13 @@ describe('Client', () => {
         stdio: 'pipe',
       });
 
-      if (config.dockerConfig) {
-        const cosignKeyPath = realpathSync('cosign.key');
-        const cosignPubPath = realpathSync('cosign.pub');
-        config.dockerConfig.mounts.push(`type=bind,src=${cosignKeyPath},dst=/cosign.key`);
-        config.dockerConfig.mounts.push(`type=bind,src=${cosignPubPath},dst=/cosign.pub`);
-      }
-
       // Read configuration data
       const token = shellEnv.OIDC_TOKEN ?? '';
       const providerUrl = shellEnv.OIDC_PROVIDER_URL ?? '';
       const clientId = shellEnv.OIDC_CLIENT_ID ?? 'sigstore';
 
       // Create signing providers using file path reference
-      // The CLI will load the key from the file path directly
+      // The key is loaded from the file path directly
       const keyRequest = create(models.sign_v1.SignRequestSchema, {
         recordRef: recordRefs[0],
         provider: {
@@ -484,10 +476,10 @@ describe('Client', () => {
       });
 
       // Sign test
-      client.sign(keyRequest);
+      await client.sign(keyRequest);
 
       if (token !== '' && providerUrl !== '') {
-        client.sign(oidcRequest);
+        await client.sign(oidcRequest);
       } else {
         recordRefs.pop(); // NOTE: Drop the unsigned record if no OIDC tested
       }
@@ -565,8 +557,8 @@ describe('Client', () => {
         verifyIndex++;
       }
 
-      // Test invalid CID
-      try {
+      // Test invalid private key
+      await expect(
         client.sign(
           create(models.sign_v1.SignRequestSchema, {
             recordRef: { cid: 'invalid-cid' },
@@ -580,13 +572,8 @@ describe('Client', () => {
               },
             },
           }),
-        );
-        expect.fail('Should have thrown error for invalid CID');
-      } catch (error) {
-        if (error instanceof Error) {
-          expect(error.message).toContain('failed to decode CID invalid-cid');
-        }
-      }
+        ),
+      ).rejects.toThrow('failed to sign record');
     } catch (error) {
       expect.fail(`Sign and verify test failed: ${error}`);
     } finally {
@@ -640,29 +627,21 @@ describe('Client', () => {
     const records = genRecords(1, 'listen');
     const recordRefs = await client.push(records);
 
-    const pool = workerpool(__dirname + '/listen_worker.ts');
-    const args = ['pull', recordRefs[0].cid];
-
-    if (config.spiffeEndpointSocket !== '') {
-      args.push(...['--spiffe-socket-path', config.spiffeEndpointSocket]);
-    }
-
-    const [command, commandArgs] = config.getCommandAndArgs(args);
-
-    try {
-      pool.exec('pullRecordsBackground', [command, commandArgs]);
-    } catch (error) {
-      expect.fail(`pullRecordsBackground execution failed: ${error}`);
-    }
-
     const events = client.listen(create(models.events_v1.ListenRequestSchema, {}));
+
+    // Trigger a store event (pull) once the listen stream is established
+    const trigger = setTimeout(() => {
+      client.pull([recordRefs[0]]).catch((error: unknown) => {
+        expect.fail(`pull execution failed: ${error}`);
+      });
+    }, 1000);
 
     for await (const response of events) {
       expect(response).toBeTypeOf(typeof models.events_v1.ListenResponseSchema);
       break; // Exit after first event for test purposes
     }
 
-    pool.terminate(true);
+    clearTimeout(trigger);
   }, 20000);
 
   test('publication', async () => {
