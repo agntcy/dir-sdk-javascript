@@ -21,7 +21,7 @@ describe.skipIf(address === '')('RuntimeClient E2E', () => {
   const client = new RuntimeClient(`http://${address}`);
 
   interface Filters {
-    labels?: { [key: string]: string };
+    labels?: Record<string, string>;
     runtimeTypes?: string[];
     locatorProtocols?: string[];
   }
