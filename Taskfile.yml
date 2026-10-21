@@ -114,6 +114,16 @@ tasks:
     cmds:
       - task: test-env:deploy:cleanup
 
+  test:runtime:
+    desc: Run the runtime discovery E2E test against a local `dirctl daemon` and a labelled Docker container
+    deps:
+      - task: deps:dirctl
+    preconditions:
+      - which npm
+      - which docker
+    cmds:
+      - tests/runtime-e2e/run.sh "${DIRCTL_PATH:-{{ .DIRCTL_BIN }}}" npx vitest run test/runtime-e2e.test.ts
+
   test:
     desc: Test javascript client SDK package
     deps:
