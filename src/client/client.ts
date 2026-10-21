@@ -31,7 +31,7 @@ import type {
   SearchRecordsRequest,
   SearchRecordsResponse,
 } from '../models/search_v1';
-import type { SignRequest, VerifyRequest, VerifyResponse } from '../models/sign_v1';
+import type { SignRequest, SignResponse, VerifyRequest, VerifyResponse } from '../models/sign_v1';
 import type {
   CreateSyncRequest,
   CreateSyncResponse,
@@ -145,7 +145,7 @@ export class Client {
     this.routingService = new RoutingService(this.routingClient);
     this.publicationService = new PublicationService(this.publicationClient);
     this.searchService = new SearchService(this.searchClient);
-    this.signService = new SignService(resolvedConfig, this.signClient);
+    this.signService = new SignService(this.signClient, this.storeService);
     this.syncService = new SyncService(this.syncClient);
     this.eventService = new EventService(this.eventClient);
     this.identityService = new IdentityService(this.identityClient);
@@ -228,8 +228,8 @@ export class Client {
     return this.storeService.deleteReferrer(request);
   }
 
-  sign(req: SignRequest): void {
-    this.signService.sign(req);
+  async sign(req: SignRequest): Promise<SignResponse> {
+    return this.signService.sign(req);
   }
 
   async verify(request: VerifyRequest): Promise<VerifyResponse> {

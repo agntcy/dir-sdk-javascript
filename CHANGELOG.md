@@ -3,6 +3,22 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
+## Unreleased
+
+### Changed
+
+- **Breaking:** signing and verification are implemented natively in TypeScript and no longer shell out to `dirctl`.
+  `Client.sign` is now asynchronous and returns a `SignResponse`; `Client.verify` without `fromServer` verifies
+  signatures locally against the record referrers.
+- **Breaking:** removed the `dirctlPath` and `dockerConfig` configuration options (`Config` constructor parameters,
+  `DockerConfig`, `DIRCTL_PATH`, `DIRCTL_IMAGE`, `DIRCTL_IMAGE_TAG`).
+- Minimum Node.js version is now `22.22.2` (required by `sigstore`).
+
+### Added
+
+- Native cosign key signing (encrypted cosign keys and plain PEM keys) and OIDC keyless signing via `sigstore`.
+- Native key, OIDC and any-provider verification mirroring the Go client.
+
 ## 1.8.0 (2026-10-16)
 
 ### Changed

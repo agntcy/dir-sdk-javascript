@@ -19,6 +19,7 @@
     "declaration": true,
     "strict": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "composite": true,

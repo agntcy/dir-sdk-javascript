@@ -11,9 +11,9 @@ on:
         type: string
         description: "The version of the dir Helm chart to install for the tests."
       dirctl_image_tag:
-        required: true
+        required: false
         type: string
-        description: "The tag of the dir-ctl Docker image to use in the tests."
+        description: "The version (release tag) of dirctl used by the interoperability tests."
       sdk_ref:
         required: false
         type: string
@@ -91,7 +91,7 @@ jobs:
       - name: Test JavaScript SDK
         env:
           DIR_CHART_VERSION: ${{ inputs.dir_chart_version }}
-          DIRCTL_IMAGE_TAG: ${{ inputs.dirctl_image_tag }}
+          DIRCTL_VERSION: ${{ inputs.dirctl_image_tag }}
         run: task test
 
       - name: Upload coverage to Codecov

@@ -12,7 +12,7 @@ Create a branch for the new release:
     - `.github/ISSUE_TEMPLATE/bug_report.yml`
 2. Update the dependencies if necessary:
     - [@buf/agntcy_dir.bufbuild_es](https://buf.build/agntcy/dir/sdks/v1.8.0%3Abufbuild/es) (Buf SDK)
-    - `.github/workflows/ci.yaml` (dir & dir-ctl version)
+    - `.github/workflows/ci.yaml` (dir version)
 3. Add an entry to `CHANGELOG.md`
 
 ## 2. Create and push tags
