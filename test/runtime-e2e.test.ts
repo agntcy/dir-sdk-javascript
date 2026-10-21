@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // End-to-end tests of the runtime discovery client against a real
-// `dirctl daemon` that discovers a labelled Docker container. They skip unless
-// DIRECTORY_RUNTIME_ADDRESS is set; run them with `task test:runtime`, which
-// starts the daemon and the container.
+// dir-runtime that discovers a labelled pod. They skip unless
+// DIRECTORY_RUNTIME_ADDRESS is set; `task test` sets it after deploying
+// dir-runtime and the pod (tests/runtime-e2e/workload.yaml) to the kind cluster.
 
 import { create } from '@bufbuild/protobuf';
 import { describe, expect, test } from 'vitest';
@@ -15,7 +15,7 @@ const { runtime_v1 } = models;
 
 const address = process.env.DIRECTORY_RUNTIME_ADDRESS ?? '';
 const name = process.env.RUNTIME_E2E_WORKLOAD_NAME ?? '';
-const LABELS = { 'sdk.agntcy/discover': 'true' };
+const LABELS = { 'org.agntcy/discover': 'true' };
 
 describe.skipIf(address === '')('RuntimeClient E2E', () => {
   const client = new RuntimeClient(`http://${address}`);
@@ -50,9 +50,8 @@ describe.skipIf(address === '')('RuntimeClient E2E', () => {
 
   test('lists and gets the discovered workload', { timeout: 90_000 }, async () => {
     const listed = await discovered();
-    expect(listed.runtime).toBe('docker');
-    expect(listed.type).toBe('container');
-    expect(listed.labels['sdk.agntcy/agent-type']).toBe('a2a');
+    expect(listed.runtime).toBe('kubernetes');
+    expect(listed.type).toBe('pod');
     expect(listed.locators.some((l) => l.protocol === 'tcp' && l.url.startsWith('tcp://'))).toBe(
       true,
     );
@@ -66,16 +65,16 @@ describe.skipIf(address === '')('RuntimeClient E2E', () => {
 
   test('filters narrow the result', { timeout: 90_000 }, async () => {
     await discovered();
-    expect(await matches({ runtimeTypes: ['docker'] })).toBe(true);
+    expect(await matches({ runtimeTypes: ['KUBERNETES'] })).toBe(true);
     expect(await matches({ locatorProtocols: ['tcp'] })).toBe(true);
-    expect(await matches({ runtimeTypes: ['kubernetes'] })).toBe(false);
+    expect(await matches({ runtimeTypes: ['docker'] })).toBe(false);
     expect(await matches({ locatorProtocols: ['slim'] })).toBe(false);
-    expect(await matches({ labels: { 'sdk.agntcy/discover': 'false' } })).toBe(false);
+    expect(await matches({ labels: { 'org.agntcy/discover': 'false' } })).toBe(false);
   });
 
   test('unknown workload fails with the operation name', async () => {
     await expect(
       client.getWorkload(create(runtime_v1.GetWorkloadRequestSchema, { id: 'does-not-exist' })),
-    ).rejects.toThrow(/^getWorkload failed:.*workload not found/);
+    ).rejects.toThrow(/^getWorkload failed:.*not found/);
   });
 });
