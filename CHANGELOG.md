@@ -3,7 +3,7 @@
 [agntcy/dir]: https://github.com/agntcy/dir
 [agntcy/dir-sdk-javascript]: https://github.com/agntcy/dir-sdk-javascript
 
-## Unreleased
+## 1.8.1 (2026-10-21)
 
 ### Changed
 
