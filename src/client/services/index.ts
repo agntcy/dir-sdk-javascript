@@ -4,6 +4,7 @@
 export { collectStream, invoke, requestGenerator } from './base.js';
 export { StoreService } from './store.js';
 export { RoutingService } from './routing.js';
+export { RuntimeService } from './runtime.js';
 export { SearchService } from './search.js';
 export { PublicationService } from './publication.js';
 export { SyncService } from './sync.js';
