@@ -15,7 +15,7 @@ import { Client, Config, models } from '../src';
 
 /**
  * Generate test records with unique names.
- * Schema: https://schema.oasf.outshift.com/0.7.0/objects/record
+ * Schema: https://schema.oasf.outshift.com/1.1.0/objects/record
  * @param count - Number of records to generate
  * @param testFunctionName - Name of the test function for record naming
  * @returns Array of generated Record objects
@@ -28,24 +28,24 @@ function genRecords(count: number, testFunctionName: string): models.core_v1.Rec
         data: {
           name: `agntcy-${testFunctionName}-${index}-${uuidv4().substring(0, 8)}`,
           version: 'v3.0.0',
-          schema_version: '0.7.0',
+          schema_version: '1.1.0',
           description: "Research agent for Cisco's marketing strategy.",
           authors: ['Cisco Systems'],
           created_at: '2025-03-19T17:06:37Z',
           skills: [
             {
-              name: 'natural_language_processing/natural_language_generation/text_completion',
-              id: 10201,
+              name: 'language_processing/language_generation/text_completion',
+              id: 10301,
             },
             {
-              name: 'natural_language_processing/analytical_reasoning/problem_solving',
-              id: 10702,
+              name: 'reasoning_planning/logical_reasoning/problem_solving',
+              id: 150102,
             },
           ],
           locators: [
             {
-              type: 'docker_image',
-              url: 'https://ghcr.io/agntcy/marketing-strategy',
+              type: 'container_image',
+              urls: ['https://ghcr.io/agntcy/marketing-strategy'],
             },
           ],
           domains: [
@@ -118,7 +118,7 @@ describe('Client', () => {
       queries: [
         {
           type: models.search_v1.RecordQueryType.SKILL_ID,
-          value: '10201',
+          value: '10301',
         },
       ],
       limit: 2,
@@ -141,15 +141,15 @@ describe('Client', () => {
         data: {
           name: `agntcy-annotation-${uuidv4().substring(0, 8)}`,
           version: 'v3.0.0',
-          schema_version: '0.8.0',
+          schema_version: '1.1.0',
           description: 'Record with custom annotations.',
           authors: ['AGNTCY'],
           created_at: '2025-03-19T17:06:37Z',
           annotations: { key: 'value' },
           skills: [
             {
-              name: 'natural_language_processing/natural_language_generation/text_completion',
-              id: 10201,
+              name: 'language_processing/language_generation/text_completion',
+              id: 10301,
             },
           ],
           locators: [],
