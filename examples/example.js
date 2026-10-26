@@ -10,24 +10,24 @@ function generateRecords(names) {
     "data": {
         "name": "${name}",
         "version": "v1.0.0",
-        "schema_version": "0.8.0",
+        "schema_version": "1.1.0",
         "description": "My example agent",
         "authors": ["AGNTCY"],
         "created_at": "2025-03-19T17:06:37Z",
         "skills": [
             {
-                "name": "natural_language_processing/natural_language_generation/text_completion",
-                "id": 10201
+                "name": "language_processing/language_generation/text_completion",
+                "id": 10301
             },
             {
-                "name": "natural_language_processing/analytical_reasoning/problem_solving",
-                "id": 10702
+                "name": "reasoning_planning/logical_reasoning/problem_solving",
+                "id": 150102
             }
         ],
         "locators": [
             {
-                "type": "docker_image",
-                "url": "https://ghcr.io/agntcy/marketing-strategy"
+                "type": "container_image",
+                "urls": ["https://ghcr.io/agntcy/marketing-strategy"]
             }
         ],
         "domains": [
@@ -44,19 +44,17 @@ function generateRecords(names) {
                 "name": "integration/a2a",
                 "id": 203,
                 "data": {
-                    "protocol_version": "lightweight orchestra moral",
-                    "card_data": "centres",
-                    "capabilities": [
-                    "state_transition_history",
-                    "push_notifications"
-                    ],
-                    "transports": [
-                    "grpc",
-                    "http"
-                    ],
-                    "output_modes": [
-                    "text/html"
-                    ]
+                    "card_schema_version": "v1.0.0",
+                    "card_data": {
+                        "name": "example-agent",
+                        "description": "My example agent",
+                        "version": "1.0.0",
+                        "supportedInterfaces": [{"url": "https://example.com/agent", "protocolBinding": "HTTP+JSON"}],
+                        "capabilities": {"streaming": true},
+                        "defaultInputModes": ["text"],
+                        "defaultOutputModes": ["text"],
+                        "skills": [{"id": "example", "name": "Example", "description": "Example skill", "tags": ["example"]}]
+                    }
                 }
             }
         ]
@@ -98,7 +96,7 @@ function generateRecords(names) {
     queries: [
       {
         type: models.search_v1.RecordQueryType.SKILL_ID,
-        value: "10201",
+        value: "10301",
       },
     ],
     limit: 3,
@@ -134,7 +132,7 @@ function generateRecords(names) {
       {
         type: models.routing_v1.RecordQueryType.SKILL,
         value:
-          "natural_language_processing/analytical_reasoning/problem_solving",
+          "reasoning_planning/logical_reasoning/problem_solving",
       },
     ],
   });
