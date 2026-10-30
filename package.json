@@ -65,7 +65,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/node": "^24.13.4",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.12",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
@@ -75,7 +75,7 @@
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.70.0",
     "uuid": "^14.0.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.64.0"
