@@ -43,7 +43,7 @@
     "pretest:coverage": "npm run build",
     "test:coverage": "vitest run --coverage"
   },
-  "packageManager": "npm@11.21.1",
+  "packageManager": "npm@11.21.2",
   "dependencies": {
     "@buf/agntcy_dir.bufbuild_es": "2.16.0-20261015113725-c24aeb0a65d8.1",
     "@bufbuild/protobuf": "^2.12.0",
@@ -78,7 +78,7 @@
     "vitest": "^4.1.12"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.65.1"
+    "@rollup/rollup-linux-x64-gnu": "4.68.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
