@@ -8,3 +8,4 @@ export * as search_v1 from './search_v1';
 export * as sign_v1 from './sign_v1';
 export * as store_v1 from './store_v1';
 export * as events_v1 from './events_v1';
+export * as runtime_v1 from './runtime_v1';

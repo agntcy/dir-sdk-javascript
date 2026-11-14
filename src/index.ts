@@ -7,6 +7,7 @@ export {
   OAuthPkceError,
   OAuthSessionManager,
   OAuthTokenHolder,
+  RuntimeClient,
   type AuthMode,
 } from './client/index.js';
 export * as models from './models';
@@ -31,6 +32,7 @@ export type {
   SearchResponse,
   UnpublishRequest,
 } from './models/routing_v1';
+export type { GetWorkloadRequest, ListWorkloadsRequest, Workload } from './models/runtime_v1';
 export type {
   SearchCIDsRequest,
   SearchCIDsResponse,
