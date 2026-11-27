@@ -231,6 +231,32 @@ for await (const event of stream) {
 }
 ```
 
+### Runtime discovery — find running workloads
+
+`RuntimeClient` talks to the runtime discovery API (`agntcy.dir.runtime.v1.DiscoveryService`) served
+by [dir-runtime](https://github.com/agntcy/dir-runtime) and `dirctl daemon`. It connects to
+dir-runtime's own address (`http://localhost:8888` by default), separately from `Client`, so
+Directory credentials are never sent to it.
+
+```js
+import { RuntimeClient } from 'agntcy-dir';
+
+const runtime = new RuntimeClient('http://localhost:8888');
+
+// List workloads, optionally filtered by labels, runtime types and locator protocols
+const workloads = await runtime.listWorkloads({
+    labels: { 'org.agntcy/discover': 'true' },
+    runtimeTypes: ['kubernetes'],
+    locatorProtocols: ['tcp'],
+});
+for (const w of workloads) {
+    console.log(w.id, w.name, w.locators.map((l) => l.url));
+}
+
+// Get one workload by hostname or ID
+const workload = await runtime.getWorkload({ id: workloads[0].id });
+```
+
 ### Signing and verification
 
 ```js
