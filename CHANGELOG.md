@@ -5,6 +5,8 @@
 
 ## Unreleased
 
+## 1.9.2 (2026-11-27)
+
 ### Added
 
 - `RuntimeClient` for the runtime discovery API (`agntcy.dir.runtime.v1.DiscoveryService`): `getWorkload` and
