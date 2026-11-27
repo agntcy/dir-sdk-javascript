@@ -7,7 +7,7 @@
 // dir-runtime and the pod (tests/runtime-e2e/workload.yaml) to the kind cluster.
 
 import { create } from '@bufbuild/protobuf';
-import { describe, expect, test } from 'vitest';
+import { beforeAll, describe, expect, test } from 'vitest';
 
 import { RuntimeClient, models } from '../src/index.js';
 
@@ -18,7 +18,11 @@ const name = process.env.RUNTIME_E2E_WORKLOAD_NAME ?? '';
 const LABELS = { 'org.agntcy/discover': 'true' };
 
 describe.skipIf(address === '')('RuntimeClient E2E', () => {
-  const client = new RuntimeClient(`http://${address}`);
+  let client: RuntimeClient;
+
+  beforeAll(() => {
+    client = new RuntimeClient(`http://${address}`);
+  });
 
   interface Filters {
     labels?: Record<string, string>;
